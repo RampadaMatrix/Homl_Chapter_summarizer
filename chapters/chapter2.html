@@ -3,128 +3,711 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Chapter 2: End-to-End ML Project | HOML</title>
+    <title>Enhanced ML Pipeline - Chapter 2</title>
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
             line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             color: #333;
         }
-        h1, h2, h3 {
-            color: #2d3748;
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
-        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
-        h2 { font-size: 1.4rem; margin: 2rem 0 1rem; }
-        p { margin: 1rem 0; }
-        pre {
-            background: #f7fafc;
-            padding: 1rem;
-            border-radius: 0.5rem;
+
+        .header {
+            background: linear-gradient(135deg, #ff6b6b, #4ecdc4);
+            padding: 40px 30px;
+            border-radius: 20px;
+            margin-bottom: 30px;
+            text-align: center;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .header p {
+            color: rgba(255,255,255,0.9);
+            font-size: 1.2rem;
+            font-weight: 300;
+        }
+
+        .pipeline-overview {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+
+        .flow-diagram {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .flow-step {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            position: relative;
+            min-width: 120px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            transition: all 0.3s ease;
+        }
+
+        .flow-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
+        }
+
+        .flow-step::after {
+            content: '→';
+            position: absolute;
+            right: -20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            color: #666;
+        }
+
+        .flow-step:last-child::after {
+            display: none;
+        }
+
+        .concept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 30px;
+            margin-top: 30px;
+        }
+
+        .concept-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .concept-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
+        }
+
+        .concept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+        }
+
+        .concept-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .concept-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .concept-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #333;
+        }
+
+        .problem-badge {
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            color: white;
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 15px;
+            display: inline-block;
+        }
+
+        .solution-text {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1rem;
+        }
+
+        .code-container {
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 15px 0;
+            position: relative;
             overflow-x: auto;
         }
-        code {
-            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
-            font-size: 0.9em;
-            color: #2d3748;
+
+        .code-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
         }
-        a {
-            color: #2b6cb0;
-            text-decoration: none;
+
+        .code-dots {
+            display: flex;
+            gap: 8px;
         }
-        a:hover {
-            text-decoration: underline;
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
         }
-        .back-link {
+
+        .dot.red { background: #ff5f56; }
+        .dot.yellow { background: #ffbd2e; }
+        .dot.green { background: #27ca3f; }
+
+        .code {
+            color: #f8f8f2;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 0.9rem;
+            line-height: 1.5;
+            white-space: pre;
+        }
+
+        .keyword { color: #66d9ef; }
+        .string { color: #a6e22e; }
+        .comment { color: #75715e; }
+        .function { color: #f92672; }
+        .number { color: #ae81ff; }
+
+        .diagram-container {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            border-radius: 15px;
+            padding: 25px;
+            margin: 20px 0;
+            color: white;
+        }
+
+        .process-flow {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .process-box {
+            background: rgba(255,255,255,0.2);
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 15px;
+            padding: 15px 20px;
+            backdrop-filter: blur(10px);
+            font-weight: 600;
+            text-align: center;
+            min-width: 120px;
+            transition: all 0.3s ease;
+        }
+
+        .process-box:hover {
+            background: rgba(255,255,255,0.3);
+            transform: scale(1.05);
+        }
+
+        .arrow {
+            font-size: 1.5rem;
+            color: rgba(255,255,255,0.8);
+        }
+
+        .key-tools {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .key-tools h4 {
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .tools-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tool-tag {
+            background: rgba(255,255,255,0.2);
+            padding: 5px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+
+        .interactive-tooltip {
+            position: relative;
             display: inline-block;
-            margin-bottom: 1.5rem;
-            color: #4a5568;
+            border-bottom: 2px dotted #4ecdc4;
+            cursor: help;
         }
-        .section {
-            margin: 2rem 0;
-            padding: 1.5rem;
+
+        .tooltip-content {
+            visibility: hidden;
+            opacity: 0;
+            position: absolute;
+            bottom: 125%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            white-space: nowrap;
+            z-index: 1000;
+            transition: all 0.3s ease;
+        }
+
+        .interactive-tooltip:hover .tooltip-content {
+            visibility: visible;
+            opacity: 1;
+        }
+
+        .navigation {
+            position: fixed;
+            right: 30px;
+            top: 50%;
+            transform: translateY(-50%);
             background: white;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
+            border-radius: 25px;
+            padding: 15px 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            z-index: 1000;
         }
-        @media (max-width: 640px) {
-            body {
-                padding: 1rem;
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ddd;
+            margin: 8px 0;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-dot.active {
+            background: #667eea;
+            transform: scale(1.3);
+        }
+
+        @media (max-width: 768px) {
+            .concept-grid {
+                grid-template-columns: 1fr;
             }
-            .section {
-                padding: 1rem;
+            
+            .flow-diagram {
+                flex-direction: column;
             }
+            
+            .flow-step::after {
+                content: '↓';
+                right: 50%;
+                bottom: -20px;
+                top: auto;
+                transform: translateX(50%);
+            }
+            
+            .navigation {
+                display: none;
+            }
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: 600;
         }
     </style>
 </head>
 <body>
-    <a href="../index.html" class="back-link">← Back to Chapters</a>
-    
-    <h1>Chapter 2: End-to-End Machine Learning Project</h1>
-    
-    <div class="section">
-        <h2>1. Project Setup</h2>
-        <p>Let's start by setting up our project environment and importing the necessary libraries:</p>
-        <pre><code>import numpy as np
-import pandas as pd
-import matplotlib.pyplot as plt
+    <div class="container">
+        <div class="header">
+            <h1>🚀 End-to-End ML Pipeline</h1>
+            <p>Chapter 2: From Raw Data to Production Model</p>
+        </div>
 
-# Load the dataset
-housing = pd.read_csv("../data/housing.csv")
+        <div class="pipeline-overview">
+            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Complete Pipeline Flow</h2>
+            <div class="flow-diagram">
+                <div class="flow-step">📊 Get Data</div>
+                <div class="flow-step">🔍 EDA</div>
+                <div class="flow-step">✂️ Split</div>
+                <div class="flow-step">🔧 Preprocess</div>
+                <div class="flow-step">🤖 Model</div>
+                <div class="flow-step">📈 Evaluate</div>
+            </div>
+        </div>
 
-# Display first few rows
-print(housing.head())</code></pre>
+        <div class="concept-grid">
+            <!-- Data Loading -->
+            <div class="concept-card" id="get-data">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">📊</div>
+                    <div class="concept-title">1. Get the Data</div>
+                </div>
+                <div class="problem-badge">Problem: Need accessible, organized dataset</div>
+                <div class="solution-text">
+                    Loads and organizes data from various sources (CSV, databases) for analysis using pandas and sklearn datasets.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Tools:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">pandas.read_csv()</span>
+                        <span class="tool-tag">sklearn.datasets</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Data Source<br>(CSV, DB)</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Load Data<br>(pandas)</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">DataFrame</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">import</span> <span class="string">pandas</span> <span class="keyword">as</span> <span class="string">pd</span>
+<span class="comment"># Load dataset</span>
+data = pd.<span class="function">read_csv</span>(<span class="string">"housing.csv"</span>)
+X, y = data.<span class="function">drop</span>(<span class="string">"target"</span>, axis=<span class="number">1</span>), data[<span class="string">"target"</span>]</div>
+                </div>
+            </div>
+
+            <!-- EDA -->
+            <div class="concept-card" id="eda">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">🔍</div>
+                    <div class="concept-title">2. Exploratory Data Analysis</div>
+                </div>
+                <div class="problem-badge">Problem: Unknown data patterns and quality issues</div>
+                <div class="solution-text">
+                    Visualizes data to uncover trends, distributions, outliers, and relationships using statistical plots and summary metrics.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Tools:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">matplotlib</span>
+                        <span class="tool-tag">seaborn</span>
+                        <span class="tool-tag">pandas.describe()</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Raw Data</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">EDA<br>(Plots, Stats)</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Insights</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">import</span> <span class="string">seaborn</span> <span class="keyword">as</span> <span class="string">sns</span>
+<span class="keyword">import</span> <span class="string">matplotlib.pyplot</span> <span class="keyword">as</span> <span class="string">plt</span>
+
+<span class="comment"># Plot distribution</span>
+sns.<span class="function">histplot</span>(data[<span class="string">"median_income"</span>])
+plt.<span class="function">show</span>()
+
+<span class="comment"># Summary statistics</span>
+<span class="function">print</span>(data.<span class="function">describe</span>())</div>
+                </div>
+            </div>
+
+            <!-- Train-Test Split -->
+            <div class="concept-card" id="split">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #45b7d1, #96c93d);">✂️</div>
+                    <div class="concept-title">3. Train-Test Split</div>
+                </div>
+                <div class="problem-badge">Problem: Need unseen data for model evaluation</div>
+                <div class="solution-text">
+                    Splits dataset into training and testing portions to evaluate model generalization on unseen data.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Settings:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">test_size=0.2</span>
+                        <span class="tool-tag">random_state=42</span>
+                        <span class="tool-tag">stratify=y</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Full Dataset</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Training Set<br>(80%)</div>
+                        <div class="process-box">Test Set<br>(20%)</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.model_selection</span> <span class="keyword">import</span> <span class="string">train_test_split</span>
+
+X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
+    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>
+)</div>
+                </div>
+            </div>
+
+            <!-- SimpleImputer -->
+            <div class="concept-card" id="imputer">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🔧</div>
+                    <div class="concept-title">4. SimpleImputer</div>
+                </div>
+                <div class="problem-badge">Problem: Missing values break models</div>
+                <div class="solution-text">
+                    Fills missing data (NaN values) using strategies like mean, median, or most frequent value to ensure complete datasets.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Strategies:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">"mean"</span>
+                        <span class="tool-tag">"median"</span>
+                        <span class="tool-tag">"most_frequent"</span>
+                        <span class="tool-tag">"constant"</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Data with<br>NaN</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">SimpleImputer</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Complete<br>Data</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.impute</span> <span class="keyword">import</span> <span class="string">SimpleImputer</span>
+
+imputer = <span class="function">SimpleImputer</span>(strategy=<span class="string">"mean"</span>)
+imputer.<span class="function">fit</span>(X_train)  <span class="comment"># Learn mean</span>
+X_filled = imputer.<span class="function">transform</span>(X_train)  <span class="comment"># Fill NaNs</span></div>
+                </div>
+            </div>
+
+            <!-- StandardScaler -->
+            <div class="concept-card" id="scaler">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">⚖️</div>
+                    <div class="concept-title">5. StandardScaler</div>
+                </div>
+                <div class="problem-badge">Problem: Features with different scales confuse models</div>
+                <div class="solution-text">
+                    Standardizes features to have mean=0 and std=1, ensuring all features contribute equally to model training.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Settings:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">with_mean=True</span>
+                        <span class="tool-tag">with_std=True</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Uneven<br>Features</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">StandardScaler</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Scaled<br>Features</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.preprocessing</span> <span class="keyword">import</span> <span class="string">StandardScaler</span>
+
+scaler = <span class="function">StandardScaler</span>()
+scaler.<span class="function">fit</span>(X_train)  <span class="comment"># Learn mean/std</span>
+X_scaled = scaler.<span class="function">transform</span>(X_train)  <span class="comment"># Scale</span></div>
+                </div>
+            </div>
+
+            <!-- Pipeline -->
+            <div class="concept-card" id="pipeline">
+                <div class="concept-header">
+                    <div class="concept-icon" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">🔗</div>
+                    <div class="concept-title">6. Pipeline</div>
+                </div>
+                <div class="problem-badge">Problem: Manual preprocessing is error-prone</div>
+                <div class="solution-text">
+                    Chains preprocessing and modeling steps into a single workflow, preventing <span class="interactive-tooltip">data leakage<span class="tooltip-content">When information from test set inadvertently influences training</span></span> and ensuring reproducibility.
+                </div>
+                <div class="key-tools">
+                    <h4>🛠️ Key Components:</h4>
+                    <div class="tools-list">
+                        <span class="tool-tag">steps=[("name", transformer)]</span>
+                        <span class="tool-tag">fit() & predict()</span>
+                    </div>
+                </div>
+                <div class="diagram-container">
+                    <div class="process-flow">
+                        <div class="process-box">Raw Data</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Imputer</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Preprocessor</div>
+                        <div class="arrow">→</div>
+                        <div class="process-box">Model</div>
+                    </div>
+                </div>
+                <div class="code-container">
+                    <div class="code-header">
+                        <div class="code-dots">
+                            <div class="dot red"></div>
+                            <div class="dot yellow"></div>
+                            <div class="dot green"></div>
+                        </div>
+                    </div>
+                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.pipeline</span> <span class="keyword">import</span> <span class="string">Pipeline</span>
+<span class="keyword">from</span> <span class="string">sklearn.linear_model</span> <span class="keyword">import</span> <span class="string">LinearRegression</span>
+
+pipeline = <span class="function">Pipeline</span>([
+    (<span class="string">"imputer"</span>, <span class="function">SimpleImputer</span>(strategy=<span class="string">"mean"</span>)),
+    (<span class="string">"preprocessor"</span>, preprocessor),
+    (<span class="string">"model"</span>, <span class="function">LinearRegression</span>())
+])
+
+pipeline.<span class="function">fit</span>(X_train, y_train)  <span class="comment"># Fit all steps</span>
+y_pred = pipeline.<span class="function">predict</span>(X_test)  <span class="comment"># Predict</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <div class="navigation">
+            <div class="nav-dot active" onclick="scrollToSection('get-data')"></div>
+            <div class="nav-dot" onclick="scrollToSection('eda')"></div>
+            <div class="nav-dot" onclick="scrollToSection('split')"></div>
+            <div class="nav-dot" onclick="scrollToSection('imputer')"></div>
+            <div class="nav-dot" onclick="scrollToSection('scaler')"></div>
+            <div class="nav-dot" onclick="scrollToSection('pipeline')"></div>
+        </div>
     </div>
-    
-    <div class="section">
-        <h2>2. Data Exploration</h2>
-        <p>Explore the dataset to understand its structure and characteristics:</p>
-        <pre><code># Basic statistics
-print(housing.describe())
 
-# Plot histograms
-housing.hist(bins=50, figsize=(12, 8))
-plt.tight_layout()
-plt.show()</code></pre>
-    </div>
-    
-    <div class="section">
-        <h2>3. Data Preprocessing</h2>
-        <p>Prepare the data for machine learning:</p>
-        <pre><code>from sklearn.model_selection import train_test_split
+    <script>
+        function scrollToSection(sectionId) {
+            document.getElementById(sectionId).scrollIntoView({
+                behavior: 'smooth'
+            });
+            
+            // Update navigation
+            document.querySelectorAll('.nav-dot').forEach(dot => dot.classList.remove('active'));
+            event.target.classList.add('active');
+        }
 
-# Split data into training and test sets
-train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)</code></pre>
-    </div>
-    
-    <div class="section">
-        <h2>4. Model Training</h2>
-        <p>Train a simple linear regression model:</p>
-        <pre><code>from sklearn.linear_model import LinearRegression
+        // Animate cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
 
-# Prepare the data
-X = housing[["median_income"]]
-y = housing["median_house_value"]
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
 
-# Train the model
-model = LinearRegression()
-model.fit(X, y)</code></pre>
-    </div>
-    
-    <div class="section">
-        <h2>5. Model Evaluation</h2>
-        <p>Evaluate the model's performance:</p>
-        <pre><code>from sklearn.metrics import mean_squared_error
+        document.querySelectorAll('.concept-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(30px)';
+            card.style.transition = 'all 0.6s ease';
+            observer.observe(card);
+        });
 
-# Make predictions
-y_pred = model.predict(X)
-
-# Calculate RMSE
-mse = mean_squared_error(y, y_pred)
-rmse = np.sqrt(mse)
-print(f"Root Mean Squared Error: {rmse:.2f}")</code></pre>
-    </div>
+        // Add click handlers for external links
+        document.querySelectorAll('.tool-tag').forEach(tag => {
+            tag.addEventListener('click', () => {
+                const toolName = tag.textContent.toLowerCase();
+                if (toolName.includes('simpleimputer')) {
+                    window.open('https://scikit-learn.org/stable/modules/generated/sklearn.impute.SimpleImputer.html', '_blank');
+                } else if (toolName.includes('standardscaler')) {
+                    window.open('https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.StandardScaler.html', '_blank');
+                } else if (toolName.includes('pipeline')) {
+                    window.open('https://scikit-learn.org/stable/modules/generated/sklearn.pipeline.Pipeline.html', '_blank');
+                }
+            });
+        });
+    </script>
 </body>
 </html>
