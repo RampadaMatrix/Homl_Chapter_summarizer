@@ -430,42 +430,75 @@
 
         <div class="section" id="data">
             <div class="section-header" onclick="toggleSection('data')">
-                📊 Data Loading & Exploration
-                <span class="toggle-icon">▼</span>
+                <span class="section-number">1</span>
+                <span class="section-title">Data Loading & Exploration</span>
             </div>
             <div class="section-content">
-                <div class="concept-grid">
-                    <div class="concept-card">
-                        <div class="concept-title">🔄 pandas.read_csv()</div>
-                        <div class="code-block">import pandas as pd
-housing = pd.read_csv("housing.csv")</div>
-                        <p><strong>🎯 Purpose:</strong> Your gateway to data exploration</p>
-                        <div class="pro-tip">
-                            <strong>💡 Pro Tip:</strong> Always check .head(), .info(), and .describe() immediately after loading!
-                        </div>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>📊</span>
+                        Loading Data with pandas
                     </div>
-
-                    <div class="concept-card">
-                        <div class="concept-title">🏥 DataFrame.info()</div>
-                        <div class="code-block">housing.info()  # Your data's health checkup!</div>
-                        <p><strong>🚨 Red Flags:</strong></p>
+                    <div class="code-block">
+                        import pandas as pd
+                        # Load your dataset
+                        housing = pd.read_csv("housing.csv")
+                        
+                        # Display first few rows
+                        print(housing.head())
+                    </div>
+                    <div class="explanation">
+                        <h4>Why pandas?</h4>
                         <ul>
-                            <li>Missing values (Non-Null Count < Total)</li>
-                            <li>Wrong data types (numbers as objects)</li>
-                            <li>Memory usage spikes</li>
+                            <li>Powerful data manipulation capabilities</li>
+                            <li>Easy to handle missing data</li>
+                            <li>Supports various file formats</li>
+                            <li>Rich data analysis tools</li>
                         </ul>
                     </div>
+                </div>
 
-                    <div class="concept-card">
-                        <div class="concept-title">📊 DataFrame.describe()</div>
-                        <div class="code-block">housing.describe()  # Statistical snapshot</div>
-                        <div class="interactive-demo">
-                            <strong>🎮 Interactive Demo:</strong>
-                            <div class="demo-controls">
-                                <button class="demo-button" onclick="runDemo('describe')">Run .describe()</button>
-                                <button class="demo-button" onclick="runDemo('outliers')">Detect Outliers</button>
-                            </div>
-                            <div class="demo-output" id="describeOutput">Click a button to see the magic! ✨</div>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🔍</span>
+                        Initial Data Inspection
+                    </div>
+                    <div class="code-block">
+                        # Check data structure
+                        print(housing.info())
+                        
+                        # Statistical summary
+                        print(housing.describe())
+                    </div>
+                    <div class="explanation">
+                        <h4>What to Look For:</h4>
+                        <ul>
+                            <li><strong>Missing values:</strong> Identify columns with missing data</li>
+                            <li><strong>Data types:</strong> Ensure correct data types</li>
+                            <li><strong>Range of values:</strong> Check for outliers</li>
+                            <li><strong>Memory usage:</strong> Monitor resource consumption</li>
+                        </ul>
+                        <div class="pro-tip">
+                            <strong>💡 Tip:</strong> Always perform these checks before any analysis to avoid potential issues later
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>📊</span>
+                        Understanding Your Data
+                    </div>
+                    <div class="explanation">
+                        <h4>Key Concepts:</h4>
+                        <ul>
+                            <li><strong>Features:</strong> Input variables that help predict the target</li>
+                            <li><strong>Target:</strong> The variable we want to predict</li>
+                            <li><strong>Observations:</strong> Individual data points in the dataset</li>
+                            <li><strong>Dimensions:</strong> Number of features and observations</li>
+                        </ul>
+                        <div class="pro-tip">
+                            <strong>💡 Tip:</strong> Spend time understanding each feature's meaning and importance
                         </div>
                     </div>
                 </div>
@@ -474,48 +507,71 @@ housing = pd.read_csv("housing.csv")</div>
 
         <div class="section" id="viz">
             <div class="section-header" onclick="toggleSection('viz')">
-                📈 Data Visualization
-                <span class="toggle-icon">▼</span>
+                <span class="section-number">2</span>
+                <span class="section-title">Data Visualization & Analysis</span>
             </div>
             <div class="section-content">
-                <div class="concept-grid">
-                    <div class="concept-card">
-                        <div class="concept-title">📊 Histograms - See Your Data's Shape</div>
-                        <div class="code-block">housing.hist(bins=50, figsize=(20,15))
-plt.show()  # 🎨 Paint the picture!</div>
-                        <table class="comparison-table">
-                            <tr>
-                                <th>Pattern</th>
-                                <th>What It Means</th>
-                                <th>Action</th>
-                            </tr>
-                            <tr>
-                                <td>🔔 Bell Curve</td>
-                                <td>Normal Distribution</td>
-                                <td>✅ Ready to go!</td>
-                            </tr>
-                            <tr>
-                                <td>⚡ Long Tail</td>
-                                <td>Skewed Data</td>
-                                <td>🔧 Transform needed</td>
-                            </tr>
-                            <tr>
-                                <td>🎯 Outliers</td>
-                                <td>Extreme values</td>
-                                <td>🔍 Investigate</td>
-                            </tr>
-                        </table>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>📊</span>
+                        Histogram Analysis
                     </div>
+                    <div class="explanation">
+                        <h4>Why Histograms?</h4>
+                        <ul>
+                            <li>Show distribution of numerical features</li>
+                            <li>Identify outliers and data skewness</li>
+                            <li>Understand data concentration</li>
+                        </ul>
+                        <div class="code-block">
+                            # Plot histogram
+                            housing.hist(bins=50, figsize=(20,15))
+                            plt.show()
+                        </div>
+                    </div>
+                </div>
 
-                    <div class="concept-card">
-                        <div class="concept-title">🔗 Scatter Matrix - Relationship Detective</div>
-                        <div class="code-block">from pandas.plotting import scatter_matrix
-scatter_matrix(housing[attributes], figsize=(12, 8))</div>
-                        <div class="warning">
-                            <strong>🕵️ What This Reveals:</strong><br>
-                            • <strong>Diagonal:</strong> Distribution of each feature<br>
-                            • <strong>Off-diagonal:</strong> Correlations between features<br>
-                            • <strong>Clusters:</strong> Hidden groups in your data
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🎯</span>
+                        Scatter Plot Analysis
+                    </div>
+                    <div class="explanation">
+                        <h4>Key Insights:</h4>
+                        <ul>
+                            <li>Identify relationships between features</li>
+                            <li>Spot patterns and clusters</li>
+                            <li>Detect potential correlations</li>
+                        </ul>
+                        <div class="code-block">
+                            # Plot scatter matrix
+                            from pandas.plotting import scatter_matrix
+                            attributes = ["median_house_value", "median_income", "total_rooms", "housing_median_age"]
+                            scatter_matrix(housing[attributes], figsize=(12, 8))
+                            plt.show()
+                        </div>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>📊</span>
+                        Box Plot Analysis
+                    </div>
+                    <div class="explanation">
+                        <h4>Understanding Box Plots:</h4>
+                        <ul>
+                            <li>Visualize data distribution</li>
+                            <li>Identify outliers</li>
+                            <li>Compare feature ranges</li>
+                        </ul>
+                        <div class="code-block">
+                            # Create box plot
+                            housing.boxplot(figsize=(20,10))
+                            plt.show()
+                        </div>
+                        <div class="pro-tip">
+                            <strong>💡 Tip:</strong> Box plots are great for identifying outliers that might need special handling
                         </div>
                     </div>
                 </div>
@@ -524,56 +580,28 @@ scatter_matrix(housing[attributes], figsize=(12, 8))</div>
 
         <div class="section" id="split">
             <div class="section-header" onclick="toggleSection('split')">
-                ✂️ Data Splitting - The Golden Rule
-                <span class="toggle-icon">▼</span>
+                <span class="section-number">3</span>
+                <span class="section-title">Data Splitting</span>
             </div>
             <div class="section-content">
-                <div class="warning">
-                    <h3>🚨 THE GOLDEN RULE</h3>
-                    <p style="font-size: 1.2em; font-weight: bold;">NEVER LOOK AT TEST DATA UNTIL THE VERY END!</p>
-                </div>
-
-                <div class="concept-grid">
-                    <div class="concept-card">
-                        <div class="concept-title">🎲 train_test_split() - Random Split</div>
-                        <div class="code-block">from sklearn.model_selection import train_test_split
-train_set, test_set = train_test_split(
-    housing, test_size=0.2, random_state=42
-)</div>
-                        <table class="comparison-table">
-                            <tr>
-                                <th>Parameter</th>
-                                <th>Purpose</th>
-                                <th>Example</th>
-                            </tr>
-                            <tr>
-                                <td><span class="highlight">test_size=0.2</span></td>
-                                <td>80% train, 20% test</td>
-                                <td>Standard split</td>
-                            </tr>
-                            <tr>
-                                <td><span class="highlight">random_state=42</span></td>
-                                <td>Reproducible results</td>
-                                <td>Same split every time</td>
-                            </tr>
-                            <tr>
-                                <td><span class="highlight">stratify=y</span></td>
-                                <td>Keep proportions</td>
-                                <td>Balanced classes</td>
-                            </tr>
-                        </table>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🎲</span>
+                        Train-Test Split
                     </div>
-
-                    <div class="concept-card">
-                        <div class="concept-title">🎯 StratifiedShuffleSplit - Smart Sampling</div>
-                        <div class="code-block">from sklearn.model_selection import StratifiedShuffleSplit
-split = StratifiedShuffleSplit(
-    n_splits=1, test_size=0.2, random_state=42
-)</div>
-                        <div class="pro-tip">
-                            <strong>🧠 Why Stratified?</strong><br>
-                            If your target has categories, this ensures your train/test sets represent them proportionally!
-                        </div>
+                    <div class="code-block">
+                        from sklearn.model_selection import train_test_split
+                        train_set, test_set = train_test_split(
+                            housing, test_size=0.2, random_state=42
+                        )
+                    </div>
+                    <div class="explanation">
+                        <h4>Why Split Data?</h4>
+                        <ul>
+                            <li>Evaluate model performance on unseen data</li>
+                            <li>Prevent overfitting</li>
+                            <li>Ensure model generalizes well</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -581,64 +609,45 @@ split = StratifiedShuffleSplit(
 
         <div class="section" id="preprocess">
             <div class="section-header" onclick="toggleSection('preprocess')">
-                🛠️ Data Preprocessing - The Cleanup Crew
-                <span class="toggle-icon">▼</span>
+                <span class="section-number">4</span>
+                <span class="section-title">Data Preprocessing</span>
             </div>
             <div class="section-content">
-                <div class="concept-grid">
-                    <div class="concept-card">
-                        <div class="concept-title">🕳️ SimpleImputer - Fill the Gaps</div>
-                        <div class="code-block">from sklearn.impute import SimpleImputer
-imputer = SimpleImputer(strategy="median")</div>
-                        
-                        <div class="interactive-demo">
-                            <strong>🎮 Strategy Selector:</strong>
-                            <div class="demo-controls">
-                                <button class="demo-button" onclick="showStrategy('mean')">Mean</button>
-                                <button class="demo-button" onclick="showStrategy('median')">Median</button>
-                                <button class="demo-button" onclick="showStrategy('mode')">Most Frequent</button>
-                                <button class="demo-button" onclick="showStrategy('constant')">Constant</button>
-                            </div>
-                            <div class="demo-output" id="strategyOutput">Choose a strategy to see when to use it! 🎯</div>
-                        </div>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🕳️</span>
+                        Handling Missing Values
                     </div>
-
-                    <div class="concept-card">
-                        <div class="concept-title">🏷️ OneHotEncoder - Make Computers Understand</div>
-                        <div class="code-block">from sklearn.preprocessing import OneHotEncoder
-cat_encoder = OneHotEncoder(sparse=False)</div>
-                        <div class="interactive-demo">
-                            <strong>🎨 Visual Example:</strong>
-                            <div style="background: #f0f0f0; padding: 15px; border-radius: 10px; margin: 10px 0;">
-                                "Red"   →  [1, 0, 0]<br>
-                                "Blue"  →  [0, 1, 0]<br>
-                                "Green" →  [0, 0, 1]
-                            </div>
-                        </div>
+                    <div class="code-block">
+                        from sklearn.impute import SimpleImputer
+                        imputer = SimpleImputer(strategy="median")
                     </div>
+                    <div class="explanation">
+                        <h4>Why Handle Missing Values?</h4>
+                        <ul>
+                            <li>Prevent errors in model training</li>
+                            <li>Improve model performance</li>
+                            <li>Ensure data quality</li>
+                        </ul>
+                    </div>
+                </div>
 
-                    <div class="concept-card">
-                        <div class="concept-title">⚖️ Feature Scaling - Level the Playing Field</div>
-                        <table class="comparison-table">
-                            <tr>
-                                <th>Scaler</th>
-                                <th>Formula</th>
-                                <th>Best For</th>
-                            </tr>
-                            <tr>
-                                <td><strong>StandardScaler</strong></td>
-                                <td>(x - mean) / std</td>
-                                <td>Neural networks, SVM</td>
-                            </tr>
-                            <tr>
-                                <td><strong>MinMaxScaler</strong></td>
-                                <td>(x - min) / (max - min)</td>
-                                <td>When you need 0-1 range</td>
-                            </tr>
-                        </table>
-                        <div class="warning">
-                            <strong>🚨 Critical:</strong> Always fit scalers on training data only!
-                        </div>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🏷️</span>
+                        Encoding Categorical Variables
+                    </div>
+                    <div class="code-block">
+                        from sklearn.preprocessing import OneHotEncoder
+                        cat_encoder = OneHotEncoder(sparse=False)
+                    </div>
+                    <div class="explanation">
+                        <h4>Why Encode Categorical Variables?</h4>
+                        <ul>
+                            <li>Enable models to understand categorical data</li>
+                            <li>Improve model performance</li>
+                            <li>Ensure data consistency</li>
+                        </ul>
                     </div>
                 </div>
             </div>
@@ -646,50 +655,66 @@ cat_encoder = OneHotEncoder(sparse=False)</div>
 
         <div class="section" id="models">
             <div class="section-header" onclick="toggleSection('models')">
-                🤖 Machine Learning Models - The Brain Power
-                <span class="toggle-icon">▼</span>
+                <span class="section-number">5</span>
+                <span class="section-title">Machine Learning Models</span>
             </div>
             <div class="section-content">
-                <div class="concept-grid">
-                    <div class="concept-card">
-                        <div class="concept-title">📈 LinearRegression - The Straight Line Hero</div>
-                        <div class="code-block">from sklearn.linear_model import LinearRegression
-lin_reg = LinearRegression()</div>
-                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
-                            <div style="background: #e8f5e8; padding: 15px; border-radius: 10px;">
-                                <strong>✅ Superpowers:</strong><br>
-                                • Quick baseline<br>
-                                • Interpretable<br>
-                                • Fast training
-                            </div>
-                            <div style="background: #ffe8e8; padding: 15px; border-radius: 10px;">
-                                <strong>❌ Limitations:</strong><br>
-                                • Only linear patterns<br>
-                                • Sensitive to outliers<br>
-                                • Assumes normality
-                            </div>
-                        </div>
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>📈</span>
+                        Linear Regression
                     </div>
-
-                    <div class="concept-card">
-                        <div class="concept-title">🌳 DecisionTreeRegressor - The Question Master</div>
-                        <div class="code-block">from sklearn.tree import DecisionTreeRegressor
-tree_reg = DecisionTreeRegressor(max_depth=10)</div>
-                        <div class="interactive-demo">
-                            <strong>🎮 Tree Depth Demo:</strong>
-                            <div class="demo-controls">
-                                <button class="demo-button" onclick="treeDemo(3)">Depth = 3</button>
-                                <button class="demo-button" onclick="treeDemo(10)">Depth = 10</button>
-                                <button class="demo-button" onclick="treeDemo(null)">No Limit</button>
-                            </div>
-                            <div class="demo-output" id="treeOutput">Select a depth to see the impact! 🌳</div>
-                        </div>
+                    <div class="code-block">
+                        from sklearn.linear_model import LinearRegression
+                        lin_reg = LinearRegression()
                     </div>
+                    <div class="explanation">
+                        <h4>Why Linear Regression?</h4>
+                        <ul>
+                            <li>Simple and interpretable</li>
+                            <li>Fast training and prediction</li>
+                            <li>Good baseline model</li>
+                        </ul>
+                    </div>
+                </div>
 
-                    <div class="concept-card">
-                        <div class="concept-title">🌲 RandomForestRegressor - Wisdom of Crowds</div>
-                        <div class="code-block">from sklearn.ensemble import RandomForestRegressor
-forest_reg = RandomForestRegressor(
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🌳</span>
+                        Decision Trees
+                    </div>
+                    <div class="code-block">
+                        from sklearn.tree import DecisionTreeRegressor
+                        tree_reg = DecisionTreeRegressor(max_depth=10)
+                    </div>
+                    <div class="explanation">
+                        <h4>Why Decision Trees?</h4>
+                        <ul>
+                            <li>Easy to interpret and visualize</li>
+                            <li>Handle non-linear relationships</li>
+                            <li>Fast training and prediction</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="concept-card">
+                    <div class="concept-title">
+                        <span>🌲</span>
+                        Random Forests
+                    </div>
+                    <div class="code-block">
+                        from sklearn.ensemble import RandomForestRegressor
+                        forest_reg = RandomForestRegressor(
+                            n_estimators=100, random_state=42
+                        )
+                    </div>
+                    <div class="explanation">
+                        <h4>Why Random Forests?</h4>
+                        <ul>
+                            <li>Improve model performance and robustness</li>
+                            <li>Handle high-dimensional data</li>
+                            <li>Provide feature importance</li>
+                        </ul>
     n_estimators=100, random_state=42
 )</div>
                         <div class="pro-tip">
