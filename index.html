@@ -1,56 +1,447 @@
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HOML Chapter Summarizer</title>
+    <title>HOML Chapter Summaries</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            line-height: 1.6;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 2rem 1rem;
-            color: #333;
+        :root {
+            --primary: #4f46e5;
+            --primary-light: #e0e7ff;
+            --text: #1f2937;
+            --text-muted: #6b7280;
+            --bg: #f9fafb;
+            --card-bg: #ffffff;
+            --border: #e5e7eb;
+            --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
         }
-        h1 {
-            color: #2d3748;
+
+        [data-theme="dark"] {
+            --primary: #818cf8;
+            --primary-light: #4b5563;
+            --text: #f3f4f6;
+            --text-muted: #9ca3af;
+            --bg: #111827;
+            --card-bg: #1f2937;
+            --border: #374151;
+            --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            color: var(--text);
+            background-color: var(--bg);
+            transition: background-color 0.3s, color 0.3s;
+            min-height: 100vh;
+            padding: 2rem 0;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 1.5rem;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 3rem;
+        }
+
+        .header h1 {
+            font-size: 2.5rem;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+            font-weight: 700;
+        }
+
+        .header p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+        }
+
+        .content-wrapper {
+            display: flex;
+            gap: 2rem;
+            margin-top: 2rem;
+        }
+
+        .book-cover {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+            border-radius: 0.75rem;
+            overflow: hidden;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+            background: var(--card-bg);
+        }
+
+        .book-cover img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .toc-container {
+            flex: 1;
+        }
+
+        .toc-card {
+            background: var(--card-bg);
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+            border: 1px solid var(--border);
+        }
+
+        .toc-header {
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toc-header h2 {
+            font-size: 1.5rem;
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .toc-list {
+            list-style: none;
+        }
+
+        .chapter-item {
+            margin-bottom: 1rem;
+            border-radius: 0.5rem;
+            overflow: hidden;
+            border: 1px solid var(--border);
+            transition: all 0.2s ease;
+        }
+
+        .chapter-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .chapter-header {
+            background: var(--primary);
+            color: white;
+            padding: 0.75rem 1rem;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chapter-title {
+            font-weight: 500;
+            font-size: 1.05rem;
+        }
+
+        .chapter-toggle {
+            transition: transform 0.2s;
+        }
+
+        .chapter-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-out;
+            background: var(--card-bg);
+        }
+
+        .chapter-content-inner {
+            padding: 1rem;
+        }
+
+        .content-toggle {
+            display: flex;
+            background: var(--bg);
+            border-radius: 0.5rem;
+            padding: 0.25rem;
             margin-bottom: 1rem;
         }
-        .chapter-list {
-            list-style: none;
-            padding: 0;
-        }
-        .chapter-item {
-            margin: 1rem 0;
-            padding: 1rem;
-            border: 1px solid #e2e8f0;
-            border-radius: 0.5rem;
+
+        .toggle-option {
+            flex: 1;
+            text-align: center;
+            padding: 0.5rem;
+            border-radius: 0.375rem;
+            cursor: pointer;
+            font-weight: 500;
+            font-size: 0.9rem;
             transition: all 0.2s;
         }
-        .chapter-item:hover {
-            border-color: #a0aec0;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+
+        .toggle-option.active {
+            background: var(--primary);
+            color: white;
         }
-        .chapter-link {
-            color: #2b6cb0;
+
+        .content-preview {
+            border: 1px solid var(--border);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg);
+            color: var(--text-muted);
+        }
+
+        .view-button {
+            display: inline-block;
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 0.375rem;
             text-decoration: none;
             font-weight: 500;
+            margin-top: 1rem;
+            transition: all 0.2s;
+            text-align: center;
+            width: 100%;
         }
-        .chapter-link:hover {
-            text-decoration: underline;
+
+        .view-button:hover {
+            background: #4338ca;
+            transform: translateY(-1px);
+        }
+
+        .theme-toggle {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            z-index: 100;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .theme-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px -1px rgba(0, 0, 0, 0.15);
+        }
+
+        @media (max-width: 768px) {
+            .content-wrapper {
+                flex-direction: column;
+            }
+
+            .book-cover {
+                max-width: 100%;
+            }
+
+
+            .theme-toggle {
+                bottom: 1rem;
+                right: 1rem;
+                width: 2.5rem;
+                height: 2.5rem;
+            }
+        }
+
+
+        .chapter-item.active .chapter-content {
+            max-height: 500px;
+        }
+
+        .chapter-item.active .chapter-toggle {
+            transform: rotate(180deg);
         }
     </style>
 </head>
 <body>
-    <h1>HOML Chapter Summaries</h1>
-    <ul class="chapter-list">
-        <li class="chapter-item">
-            <a href="chapters/chapter2.html" class="chapter-link">
-                Chapter 2: End-to-End Machine Learning Project
-            </a>
-        </li>
-    </ul>
+    <div class="container">
+        <div class="header">
+            <h1>Hands-On Machine Learning</h1>
+            <p>Interactive Chapter Summaries</p>
+        </div>
+
+        <div class="content-wrapper">
+            <div class="book-cover">
+                <img src="image.png" alt="Hands-On Machine Learning Book Cover">
+            </div>
+
+            <div class="toc-container">
+                <div class="toc-card">
+                    <div class="toc-header">
+                        <h2><i class="fas fa-book-open"></i> Table of Contents</h2>
+                    </div>
+                    
+                    <ul class="toc-list">
+                        <!-- Chapter 1 -->
+                        <li class="chapter-item">
+                            <div class="chapter-header">
+                                <span class="chapter-title">Chapter 1: The Machine Learning Landscape</span>
+                                <i class="fas fa-chevron-down chapter-toggle"></i>
+                            </div>
+                            <div class="chapter-content">
+                                <div class="chapter-content-inner">
+                                    <div class="content-toggle">
+                                        <div class="toggle-option active" data-content="interactive">Interactive</div>
+                                        <div class="toggle-option" data-content="pdf">PDF</div>
+                                    </div>
+                                    <div class="content-preview">
+                                        Interactive content preview for Chapter 1
+                                    </div>
+                                    <a href="chapters/chapter1.html" class="view-button">
+                                        <i class="fas fa-external-link-alt"></i> View Chapter 1
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Chapter 2 -->
+                        <li class="chapter-item active">
+                            <div class="chapter-header">
+                                <span class="chapter-title">Chapter 2: End-to-End Machine Learning Project</span>
+                                <i class="fas fa-chevron-down chapter-toggle"></i>
+                            </div>
+                            <div class="chapter-content" style="max-height: 500px;">
+                                <div class="chapter-content-inner">
+                                    <div class="content-toggle">
+                                        <div class="toggle-option active" data-content="interactive">Interactive</div>
+                                        <div class="toggle-option" data-content="pdf">PDF</div>
+                                    </div>
+                                    <div class="content-preview">
+                                        Interactive content preview for Chapter 2
+                                    </div>
+                                    <a href="chapters/chapter2.html" class="view-button">
+                                        <i class="fas fa-external-link-alt"></i> View Interactive Summary
+                                    </a>
+                                    <a href="Home_C2_Summarize3.pdf" class="view-button" style="background: #4b5563; margin-top: 0.5rem;" target="_blank">
+                                        <i class="fas fa-file-pdf"></i> View PDF Version
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+
+                        <!-- Chapter 3 -->
+                        <li class="chapter-item">
+                            <div class="chapter-header">
+                                <span class="chapter-title">Chapter 3: Classification</span>
+                                <i class="fas fa-chevron-down chapter-toggle"></i>
+                            </div>
+                            <div class="chapter-content">
+                                <div class="chapter-content-inner">
+                                    <div class="content-toggle">
+                                        <div class="toggle-option active" data-content="interactive">Interactive</div>
+                                        <div class="toggle-option" data-content="pdf">PDF</div>
+                                    </div>
+                                    <div class="content-preview">
+                                        Interactive content preview for Chapter 3
+                                    </div>
+                                    <a href="chapters/chapter3.html" class="view-button">
+                                        <i class="fas fa-external-link-alt"></i> View Chapter 3
+                                    </a>
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
+        <i class="fas fa-moon"></i>
+    </button>
+
+    <script>
+        // Theme Toggle
+        const themeToggle = document.getElementById('themeToggle');
+        const html = document.documentElement;
+        const icon = themeToggle.querySelector('i');
+
+        // Check for saved theme preference or use system preference
+        const savedTheme = localStorage.getItem('theme') || 
+                         (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+        
+        // Apply saved theme
+        if (savedTheme === 'dark') {
+            html.setAttribute('data-theme', 'dark');
+            icon.className = 'fas fa-sun';
+        }
+
+        // Toggle theme
+        themeToggle.addEventListener('click', () => {
+            const isDark = html.getAttribute('data-theme') !== 'dark';
+            html.setAttribute('data-theme', isDark ? 'dark' : 'light');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+        });
+
+        // Chapter accordion functionality
+        const chapterHeaders = document.querySelectorAll('.chapter-header');
+        
+        chapterHeaders.forEach(header => {
+            header.addEventListener('click', () => {
+                const chapterItem = header.parentElement;
+                const isActive = chapterItem.classList.contains('active');
+                
+                // Close all other chapters
+                document.querySelectorAll('.chapter-item').forEach(item => {
+                    if (item !== chapterItem) {
+                        item.classList.remove('active');
+                    }
+                });
+                
+                // Toggle current chapter
+                if (!isActive) {
+                    chapterItem.classList.add('active');
+                }
+            });
+        });
+
+        // Content toggle functionality
+        const toggleOptions = document.querySelectorAll('.toggle-option');
+        
+        toggleOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                const container = this.closest('.content-toggle');
+                const preview = this.closest('.chapter-content-inner').querySelector('.content-preview');
+                
+                // Update active state
+                container.querySelectorAll('.toggle-option').forEach(opt => opt.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update preview content based on selection
+                const contentType = this.getAttribute('data-content');
+                if (contentType === 'pdf') {
+                    preview.textContent = 'PDF preview for this chapter';
+                } else {
+                    preview.textContent = `Interactive content preview for ${this.closest('.chapter-item').querySelector('.chapter-title').textContent}`;
+                }
+            });
+        });
+
+        // Open first chapter by default
+        document.querySelector('.chapter-item').classList.add('active');
+    </script>
 </body>
 </html>
