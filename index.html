@@ -6,20 +6,117 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>HOML Chapter Summarizer</title>
   <style>
-    body { font-family: Arial, sans-serif; background: #f0f4ff; padding: 40px; }
-    h1 { text-align: center; color: #4a56e2; }
-    ul { max-width: 500px; margin: 30px auto; list-style: none; padding: 0; }
-    li { background: white; margin: 15px 0; padding: 20px; border-radius: 10px;
-         box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05); }
-    a { text-decoration: none; font-weight: bold; color: #4a56e2; }
-    a:hover { text-decoration: underline; }
+    :root {
+      --primary-color: #4a56e2;
+      --background-color: #f0f4ff;
+      --card-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: var(--background-color);
+      color: #333;
+      line-height: 1.6;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 4rem 2rem;
+    }
+
+    h1 {
+      text-align: center;
+      color: var(--primary-color);
+      font-size: 2.5rem;
+      margin-bottom: 2rem;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: fadeInUp 1s ease-out forwards;
+    }
+
+    .chapter-list {
+      list-style: none;
+      display: grid;
+      gap: 1.5rem;
+      animation: fadeIn 1s ease-out forwards;
+    }
+
+    .chapter-item {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 15px;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      animation: slideIn 0.5s ease-out forwards;
+    }
+
+    .chapter-item:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .chapter-link {
+      display: block;
+      color: var(--primary-color);
+      text-decoration: none;
+      font-size: 1.1rem;
+      font-weight: 500;
+      transition: color 0.3s ease;
+    }
+
+    .chapter-link:hover {
+      color: #333;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (max-width: 768px) {
+      .container {
+        padding: 2rem 1rem;
+      }
+
+      h1 {
+        font-size: 2rem;
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>📘 HOML Chapter Summarizer</h1>
-  <ul>
-    <li><a href="chapters/chapter2.html">Chapter 2: End-to-End Machine Learning Project</a></li>
-    <!-- Add more chapter links as you build them -->
-  </ul>
+  <div class="container">
+    <h1>📘 HOML Chapter Summarizer</h1>
+    <ul class="chapter-list">
+      <li class="chapter-item">
+        <a href="chapters/chapter2.html" class="chapter-link">
+          Chapter 2: End-to-End Machine Learning Project
+        </a>
+      </li>
+      <!-- Add more chapter links as you build them -->
+    </ul>
+  </div>
 </body>
 </html>
