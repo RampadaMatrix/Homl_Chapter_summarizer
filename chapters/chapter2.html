@@ -4,466 +4,127 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Chapter 2: End-to-End ML Project | HOML</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/atom-one-dark.min.css">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f9fafb;
-            --card-bg: #ffffff;
-            --text: #111827;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --info: #3b82f6;
-            --radius: 0.5rem;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.6;
-            min-height: 100vh;
-        }
-
-
-        .container {
-            max-width: 65rem;
+            max-width: 800px;
             margin: 0 auto;
             padding: 2rem 1rem;
+            color: #333;
         }
-
-
-        header {
-            margin-bottom: 3rem;
-            text-align: center;
+        h1, h2, h3 {
+            color: #2d3748;
         }
-
-        .back-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            color: var(--primary);
-            text-decoration: none;
-            font-weight: 500;
-            margin-bottom: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .back-link:hover {
-            color: var(--primary-hover);
-        }
-
-        h1 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            margin-bottom: 1rem;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.25rem;
-            max-width: 42rem;
-            margin: 0 auto 2rem;
-        }
-
-        .section {
-            background: var(--card-bg);
-            border-radius: var(--radius);
-            box-shadow: var(--shadow-sm);
-            border: 1px solid var(--border);
-            margin-bottom: 2rem;
-            overflow: hidden;
-            transition: var(--transition);
-        }
-
-        .section:hover {
-            box-shadow: var(--shadow);
-        }
-
-        .section-header {
-            padding: 1.25rem 1.5rem;
-            background: #f8fafc;
-            border-bottom: 1px solid var(--border);
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            transition: var(--transition);
-        }
-
-        .section-header:hover {
-            background: #f1f5f9;
-        }
-
-        .section-header h2 {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: var(--text);
-            margin: 0;
-        }
-
-        .section-content {
-            padding: 1.5rem;
-            display: none;
-        }
-
-        .section.active .section-content {
-            display: block;
-            animation: fadeIn 0.3s ease-out;
-        }
-
-        .section.active .section-header {
-            background: #f1f5f9;
-            border-bottom-color: var(--border);
-        }
-
-        .section-toggle {
-            transition: transform 0.2s ease;
-        }
-        .section.active .section-toggle {
-            transform: rotate(180deg);
-        }
-
-        p, ul, ol {
-            margin-bottom: 1.25rem;
-            line-height: 1.7;
-            color: var(--text);
-        }
-
-        ul, ol {
-            padding-left: 1.5rem;
-        }
-
-
-        .code-block {
-            background: #282c34;
-            border-radius: var(--radius);
-            margin: 1.5rem 0;
-            overflow: hidden;
-            box-shadow: var(--shadow);
-        }
-
-        .code-header {
-            background: #1e2227;
-            padding: 0.5rem 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            font-size: 0.875rem;
-            color: #9da5b3;
-            font-family: 'Fira Code', 'Consolas', monospace;
-        }
-
-        .code-copy {
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: var(--transition);
-        }
-
-        .code-copy:hover {
-            color: #fff;
-        }
-
+        h1 { font-size: 1.8rem; margin-bottom: 1.5rem; }
+        h2 { font-size: 1.4rem; margin: 2rem 0 1rem; }
+        p { margin: 1rem 0; }
         pre {
-            margin: 0 !important;
-            border-radius: 0 0 var(--radius) var(--radius) !important;
+            background: #f7fafc;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            overflow-x: auto;
         }
-
-        .note {
-            background: #eff6ff;
-            border-left: 4px solid var(--info);
-            padding: 1rem 1.25rem;
-            border-radius: 0 var(--radius) var(--radius) 0;
-            margin: 1.5rem 0;
+        code {
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 0.9em;
+            color: #2d3748;
         }
-
-        .note-header {
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-weight: 600;
-            margin-bottom: 0.5rem;
-            color: #1d4ed8;
+        a {
+            color: #2b6cb0;
+            text-decoration: none;
         }
-
-        .note.warning {
-            background: #fffbeb;
-            border-left-color: var(--warning);
+        a:hover {
+            text-decoration: underline;
         }
-
-        .note.warning .note-header {
-            color: #b45309;
+        .back-link {
+            display: inline-block;
+            margin-bottom: 1.5rem;
+            color: #4a5568;
         }
-
-        .note.tip {
-            background: #ecfdf5;
-            border-left-color: var(--success);
+        .section {
+            margin: 2rem 0;
+            padding: 1.5rem;
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
         }
-
-        .note.tip .note-header {
-            color: #047857;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(-10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 1.5rem 1rem;
+        @media (max-width: 640px) {
+            body {
+                padding: 1rem;
             }
-            h1 {
-                font-size: 1.875rem;
-            }
-            .section-header {
-                padding: 1rem 1.25rem;
-            }
-            .section-header h2 {
-                font-size: 1.125rem;
+            .section {
+                padding: 1rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <a href="../index.html" class="back-link">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="19" y1="12" x2="5" y2="12"></line>
-                    <polyline points="12 19 5 12 12 5"></polyline>
-                </svg>
-                Back to Chapters
-            </a>
-            <h1>Chapter 2: End-to-End Machine Learning Project</h1>
-            <p class="subtitle">A comprehensive guide to building a complete ML pipeline from data collection to model deployment</p>
-        </header>
-
-        <section class="section active">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>1. Project Setup</h2>
-                <svg class="section-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="section-content">
-                <p>Let's start by setting up our project environment and importing the necessary libraries:</p>
-                
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Python</span>
-                        <span class="code-copy" onclick="copyCode(this)">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy
-                        </span>
-                    </div>
-                    <pre><code class="language-python"># Core libraries
-import numpy as np
+    <a href="../index.html" class="back-link">← Back to Chapters</a>
+    
+    <h1>Chapter 2: End-to-End Machine Learning Project</h1>
+    
+    <div class="section">
+        <h2>1. Project Setup</h2>
+        <p>Let's start by setting up our project environment and importing the necessary libraries:</p>
+        <pre><code>import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sns
 
-# Scikit-learn components
-from sklearn.model_selection import train_test_split
-from sklearn.impute import SimpleImputer
-from sklearn.preprocessing import StandardScaler, OneHotEncoder
-from sklearn.pipeline import Pipeline
-from sklearn.compose import ColumnTransformer
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_squared_error
-
-# Set random seed for reproducibility
-np.random.seed(42)
-
-# Set style for plots
-sns.set_style("whitegrid")
-plt.style.use("seaborn-v0_8-whitegrid")
-%matplotlib inline</code></pre>
-                </div>
-
-                <div class="note tip">
-                    <div class="note-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        <span>Tip</span>
-                    </div>
-                    <p>Consider using a virtual environment for your project to manage dependencies. You can create one using <code>python -m venv venv</code> and activate it with <code>source venv/bin/activate</code> (Linux/Mac) or <code>venv\Scripts\activate</code> (Windows).</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>2. Data Collection</h2>
-                <svg class="section-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="section-content">
-                <p>Let's load our dataset and take an initial look at its structure:</p>
-                
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Python</span>
-                        <span class="code-copy" onclick="copyCode(this)">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy
-                        </span>
-                    </div>
-                    <pre><code class="language-python"># Load the dataset
+# Load the dataset
 housing = pd.read_csv("../data/housing.csv")
 
-# Display the first few rows
-print(housing.head())
-
-# Get dataset info
-print("\nDataset Info:")
-print(housing.info())
-
-# Basic statistics
-print("\nSummary Statistics:")
-print(housing.describe())</code></pre>
-                </div>
-
-                <div class="note">
-                    <div class="note-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="12" cy="12" r="10"></circle>
-                            <line x1="12" y1="16" x2="12" y2="12"></line>
-                            <line x1="12" y1="8" x2="12.01" y2="8"></line>
-                        </svg>
-                        <span>Note</span>
-                    </div>
-                    <p>Make sure you have the dataset file in the correct location. You can download it from the book's GitHub repository or use the URL directly with <code>pd.read_csv()</code>.</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="section">
-            <div class="section-header" onclick="toggleSection(this)">
-                <h2>3. Data Exploration</h2>
-                <svg class="section-toggle" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="6 9 12 15 18 9"></polyline>
-                </svg>
-            </div>
-            <div class="section-content">
-                <p>Let's explore the data to understand its characteristics and identify any patterns or issues:</p>
-                
-                <div class="code-block">
-                    <div class="code-header">
-                        <span>Python</span>
-                        <span class="code-copy" onclick="copyCode(this)">
-                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                <rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect>
-                                <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path>
-                            </svg>
-                            Copy
-                        </span>
-                    </div>
-                    <pre><code class="language-python"># Plot histograms of numerical features
-housing.hist(bins=50, figsize=(15, 10))
-plt.tight_layout()
-plt.show()
-
-# Create a scatter plot of geographical data
-housing.plot(kind="scatter", x="longitude", y="latitude", alpha=0.4,
-             s=housing["population"]/100, label="population", figsize=(10, 7),
-             c="median_house_value", cmap=plt.get_cmap("jet"), colorbar=True)
-plt.legend()
-plt.show()
-
-# Correlation matrix
-corr_matrix = housing.corr()
-plt.figure(figsize=(10, 8))
-sns.heatmap(corr_matrix, annot=True, cmap="coolwarm", center=0)
-plt.title("Correlation Matrix")
-plt.show()</code></pre>
-                </div>
-
-                <div class="note warning">
-                    <div class="note-header">
-                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
-                            <line x1="12" y1="9" x2="12" y2="13"></line>
-                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                        </svg>
-                        <span>Important</span>
-                    </div>
-                    <p>Pay attention to the distribution of the target variable and any potential outliers. The correlation matrix will help identify which features are most strongly related to the target variable.</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- More sections will be added here -->
-
+# Display first few rows
+print(housing.head())</code></pre>
     </div>
+    
+    <div class="section">
+        <h2>2. Data Exploration</h2>
+        <p>Explore the dataset to understand its structure and characteristics:</p>
+        <pre><code># Basic statistics
+print(housing.describe())
 
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
-    <script>
-        // Initialize syntax highlighting
-        document.addEventListener('DOMContentLoaded', (event) => {
-            hljs.highlightAll();
-            
-            // Open first section by default
-            document.querySelector('.section').classList.add('active');
-        });
+# Plot histograms
+housing.hist(bins=50, figsize=(12, 8))
+plt.tight_layout()
+plt.show()</code></pre>
+    </div>
+    
+    <div class="section">
+        <h2>3. Data Preprocessing</h2>
+        <p>Prepare the data for machine learning:</p>
+        <pre><code>from sklearn.model_selection import train_test_split
 
-        // Toggle section content
-        function toggleSection(header) {
-            const section = header.parentElement;
-            section.classList.toggle('active');
-        }
+# Split data into training and test sets
+train_set, test_set = train_test_split(housing, test_size=0.2, random_state=42)</code></pre>
+    </div>
+    
+    <div class="section">
+        <h2>4. Model Training</h2>
+        <p>Train a simple linear regression model:</p>
+        <pre><code>from sklearn.linear_model import LinearRegression
 
-        // Copy code to clipboard
-        function copyCode(button) {
-            const codeBlock = button.closest('.code-block');
-            const code = codeBlock.querySelector('code').innerText;
-            
-            navigator.clipboard.writeText(code).then(() => {
-                const originalText = button.textContent;
-                button.textContent = 'Copied!';
-                button.style.color = '#10b981';
-                
-                setTimeout(() => {
-                    button.innerHTML = originalText;
-                    button.style.color = '';
-                }, 2000);
-            }).catch(err => {
-                console.error('Failed to copy code: ', err);
-            });
-        }
-    </script>
+# Prepare the data
+X = housing[["median_income"]]
+y = housing["median_house_value"]
+
+# Train the model
+model = LinearRegression()
+model.fit(X, y)</code></pre>
+    </div>
+    
+    <div class="section">
+        <h2>5. Model Evaluation</h2>
+        <p>Evaluate the model's performance:</p>
+        <pre><code>from sklearn.metrics import mean_squared_error
+
+# Make predictions
+y_pred = model.predict(X)
+
+# Calculate RMSE
+mse = mean_squared_error(y, y_pred)
+rmse = np.sqrt(mse)
+print(f"Root Mean Squared Error: {rmse:.2f}")</code></pre>
+    </div>
 </body>
 </html>

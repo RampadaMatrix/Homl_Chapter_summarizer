@@ -5,177 +5,52 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>HOML Chapter Summarizer</title>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-hover: #4338ca;
-            --bg: #f9fafb;
-            --card-bg: #ffffff;
-            --text: #111827;
-            --text-secondary: #6b7280;
-            --border: #e5e7eb;
-            --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-            --shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
-            --shadow-md: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-            --radius: 0.5rem;
-            --transition: all 150ms cubic-bezier(0.4, 0, 0.2, 1);
-        }
-
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            line-height: 1.5;
-            min-height: 100vh;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.6;
+            max-width: 800px;
+            margin: 0 auto;
             padding: 2rem 1rem;
+            color: #333;
         }
-
-        .container {
-            max-width: 48rem;
-            margin: 0 auto;
-        }
-
-        header {
-            text-align: center;
-            margin-bottom: 3rem;
-            animation: fadeIn 0.6s ease-out forwards;
-        }
-
-
         h1 {
-            font-size: 2.25rem;
-            font-weight: 800;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-            background: linear-gradient(90deg, #4f46e5, #7c3aed);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            letter-spacing: -0.025em;
+            color: #2d3748;
+            margin-bottom: 1rem;
         }
-
-        .subtitle {
-            color: var(--text-secondary);
-            font-size: 1.125rem;
-            max-width: 36rem;
-            margin: 0 auto;
-        }
-
         .chapter-list {
             list-style: none;
-            display: grid;
-            gap: 1rem;
-            animation: fadeIn 0.6s ease-out 0.1s forwards;
-            opacity: 0;
+            padding: 0;
         }
-
         .chapter-item {
-            background: var(--card-bg);
-            border: 1px solid var(--border);
-            border-radius: var(--radius);
-            padding: 1.5rem;
-            transition: var(--transition);
-            box-shadow: var(--shadow-sm);
+            margin: 1rem 0;
+            padding: 1rem;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
         }
-
         .chapter-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-            border-color: var(--primary);
+            border-color: #a0aec0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
         }
-
         .chapter-link {
+            color: #2b6cb0;
             text-decoration: none;
-            color: inherit;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
+            font-weight: 500;
         }
-
-
-        .chapter-number {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            width: 2.5rem;
-            height: 2.5rem;
-            border-radius: 50%;
-            background: linear-gradient(135deg, #6366f1, #8b5cf6);
-            color: white;
-            font-weight: 600;
-            flex-shrink: 0;
-        }
-
-        .chapter-content h3 {
-            font-size: 1.125rem;
-            font-weight: 600;
-            margin-bottom: 0.25rem;
-            color: var(--text);
-        }
-
-        .chapter-content p {
-            color: var(--text-secondary);
-            font-size: 0.875rem;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @media (max-width: 640px) {
-            body {
-                padding: 1.5rem 1rem;
-            }
-            
-            h1 {
-                font-size: 1.875rem;
-            }
-            
-            .chapter-item {
-                padding: 1.25rem;
-            }
+        .chapter-link:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>Hands-On Machine Learning</h1>
-            <p class="subtitle">Chapter Summaries & Practical Implementations</p>
-        </header>
-
-        <ul class="chapter-list">
-            <li class="chapter-item">
-                <a href="chapters/chapter2.html" class="chapter-link">
-                    <span class="chapter-number">2</span>
-                    <div class="chapter-content">
-                        <h3>End-to-End Machine Learning Project</h3>
-                        <p>From data exploration to model deployment - a complete workflow</p>
-                    </div>
-                </a>
-            </li>
-            <!-- More chapters will be added here -->
-            <li class="chapter-item coming-soon">
-                <div class="chapter-link">
-                    <span class="chapter-number">3</span>
-                    <div class="chapter-content">
-                        <h3>Classification</h3>
-                        <p>Coming soon</p>
-                    </div>
-                </div>
-            </li>
-        </ul>
-    </div>
+    <h1>HOML Chapter Summaries</h1>
+    <ul class="chapter-list">
+        <li class="chapter-item">
+            <a href="chapters/chapter2.html" class="chapter-link">
+                Chapter 2: End-to-End Machine Learning Project
+            </a>
+        </li>
+    </ul>
 </body>
 </html>
