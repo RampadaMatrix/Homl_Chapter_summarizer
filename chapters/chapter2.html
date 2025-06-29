@@ -1,37 +1,11 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>End-to-End ML Pipeline | Chapter 2: From Raw Data to Production</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>End-to-End ML Project: California Housing</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
     <style>
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #818cf8;
-            --secondary: #10b981;
-            --dark: #1f2937;
-            --light: #f9fafb;
-            --gray: #6b7280;
-            --gray-light: #e5e7eb;
-            --success: #10b981;
-            --warning: #f59e0b;
-            --danger: #ef4444;
-            --card-bg: #ffffff;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            --transition: all 0.3s ease;
-        }
-
-        [data-theme="dark"] {
-            --dark: #f3f4f6;
-            --light: #111827;
-            --gray: #9ca3af;
-            --gray-light: #374151;
-            --card-bg: #1f2937;
-            --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-        }
-
         * {
             margin: 0;
             padding: 0;
@@ -39,1486 +13,1105 @@
         }
 
         body {
-            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
-            background: var(--light);
-            color: var(--dark);
-            transition: var(--transition);
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             min-height: 100vh;
         }
 
         .container {
             max-width: 1200px;
             margin: 0 auto;
-            padding: 2rem 1rem;
-            position: relative;
-        }
-
-        .progress-container {
-            width: 100%;
-            height: 4px;
-            background: var(--gray-light);
-            position: fixed;
-            top: 0;
-            left: 0;
-            z-index: 1000;
-        }
-
-        .progress-bar {
-            height: 4px;
-            background: var(--primary);
-            width: 0%;
-            transition: width 0.1s ease;
+            background: white;
+            min-height: 100vh;
+            box-shadow: 0 0 30px rgba(0,0,0,0.1);
         }
 
         .header {
-            background: linear-gradient(135deg, var(--primary), var(--primary-light));
-            padding: 3rem 2rem;
-            border-radius: 1rem;
-            margin: 1rem 0 2.5rem;
-            text-align: center;
-            box-shadow: var(--card-shadow);
-            position: relative;
-            overflow: hidden;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
             color: white;
-        }
-
-        .header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: radial-gradient(circle at 10% 20%, rgba(255,255,255,0.1) 0%, transparent 50%);
-            pointer-events: none;
+            padding: 2rem;
+            text-align: center;
         }
 
         .header h1 {
             font-size: 2.5rem;
-            font-weight: 800;
             margin-bottom: 0.5rem;
-            position: relative;
-            display: inline-block;
-        }
-
-        .header h1::after {
-            content: '';
-            position: absolute;
-            bottom: -10px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 80px;
-            height: 4px;
-            background: rgba(255,255,255,0.5);
-            border-radius: 2px;
         }
 
         .header p {
-            color: rgba(255,255,255,0.9);
             font-size: 1.2rem;
-            font-weight: 300;
+            opacity: 0.9;
         }
 
-        .theme-toggle {
-            position: fixed;
-            top: 1.5rem;
-            right: 1.5rem;
-            background: var(--card-bg);
-            border: none;
-            width: 2.5rem;
-            height: 2.5rem;
+        .nav-menu {
+            background: #34495e;
+            padding: 1rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-menu ul {
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: space-around;
+        }
+
+        .nav-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: 5px;
+            transition: background 0.3s;
+            font-size: 0.9rem;
+        }
+
+        .nav-menu a:hover {
+            background: #3498db;
+        }
+
+        .step {
+            margin: 2rem;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            background: white;
+            border-left: 5px solid #3498db;
+        }
+
+        .step-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .step-number {
+            background: #3498db;
+            color: white;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            box-shadow: var(--card-shadow);
-            z-index: 1000;
-            transition: var(--transition);
+            font-weight: bold;
+            margin-right: 1rem;
         }
 
-        .theme-toggle:hover {
-            transform: translateY(-2px);
+        .step-title {
+            font-size: 1.8rem;
+            color: #2c3e50;
         }
 
-        .pipeline-overview {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 2rem;
-            margin: 2rem 0;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            position: relative;
-            overflow: hidden;
+        .concept-box {
+            background: #e8f5e8;
+            border: 1px solid #4caf50;
+            border-radius: 8px;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-left: 4px solid #4caf50;
         }
 
-        .flow-diagram {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-            margin: 1.5rem 0;
-            position: relative;
+        .concept-box.problem {
+            background: #fff3e0;
+            border-color: #ff9800;
+            border-left-color: #ff9800;
         }
 
-        @media (min-width: 768px) {
-            .flow-diagram::before {
-                content: '';
-                position: absolute;
-                top: 50%;
-                left: 0;
-                right: 0;
-                height: 2px;
-                background: var(--gray-light);
-                z-index: 0;
-            }
-        }
-
-        .flow-step {
-            background: var(--card-bg);
-            color: var(--dark);
-            padding: 0.75rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            position: relative;
-            min-width: 120px;
-            text-align: center;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            border: 2px solid var(--gray-light);
-            z-index: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .flow-step i {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--primary);
-        }
-
-        .flow-step:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
-        }
-
-        @media (min-width: 768px) {
-            .flow-step::after {
-                content: '→';
-                position: absolute;
-                right: -1.5rem;
-                top: 50%;
-                transform: translateY(-50%);
-                font-size: 1.5rem;
-                color: var(--gray);
-                text-shadow: 0 0 10px var(--card-bg);
-                background: var(--card-bg);
-                padding: 0 0.5rem;
-                z-index: 2;
-            }
-        }
-
-        .flow-step:last-child::after {
-            display: none;
-        }
-
-        .toc {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: var(--card-shadow);
-        }
-
-        .toc h3 {
-            margin-bottom: 1rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .toc h3 i {
-            font-size: 1.2rem;
-        }
-
-        .toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
-            display: flex;
-            flex-direction: column;
-            gap: 0.5rem;
-        }
-
-        .toc li {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            transition: var(--transition);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-
-        .toc li:hover {
-            background: rgba(79, 70, 229, 0.1);
-            color: var(--primary);
-        }
-
-        .toc li i {
-            font-size: 0.8rem;
-            opacity: 0.7;
-        }
-
-        .concept-grid {
-            display: grid;
-            gap: 2rem;
-            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
-            gap: 30px;
-            margin-top: 30px;
-        }
-
-        .concept-card {
-            background: var(--card-bg);
-            border-radius: 1rem;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
-            border: 1px solid var(--gray-light);
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .concept-card::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-        }
-
-        .concept-header {
-            padding: 1.5rem;
-            display: flex;
-            align-items: center;
-            gap: 1rem;
-            background: linear-gradient(135deg, rgba(79, 70, 229, 0.1) 0%, rgba(124, 58, 237, 0.1) 100%);
-            border-bottom: 1px solid var(--gray-light);
-            position: relative;
-        }
-
-        .concept-icon {
-            width: 3rem;
-            height: 3rem;
-            border-radius: 0.75rem;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.5rem;
-            color: white;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            flex-shrink: 0;
-            transition: var(--transition);
+        .concept-box.solution {
+            background: #e3f2fd;
+            border-color: #2196f3;
+            border-left-color: #2196f3;
         }
 
         .concept-title {
-            font-size: 1.4rem;
-            font-weight: 700;
-            color: #333;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
         }
 
-        .problem-badge {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            padding: 0.5rem 1rem;
-            border-radius: 1rem;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin: 0 1.5rem 1rem;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-
-        .problem-badge::before {
-            content: '⚠️';
-            font-size: 1rem;
-        }
-
-        .solution-text {
-            color: #555;
-            margin-bottom: 20px;
-            font-size: 1rem;
-        }
-
-        .code-container {
-            background: #1e1e2e;
-            border-radius: 0.75rem;
-            margin: 1.5rem;
-            overflow: hidden;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border: 1px solid var(--gray-light);
-        }
-
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: #1a1b26;
-            border-bottom: 1px solid #2a2b3a;
-        }
-
-        .code-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .code-btn {
-            background: none;
-            border: none;
-            color: var(--gray);
-            cursor: pointer;
-            padding: 0.25rem 0.5rem;
-            border-radius: 0.25rem;
-            font-size: 0.8rem;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
-        .code-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--light);
-        }
-
-        .code {
-            color: #e2e8f0;
-            font-family: 'Fira Code', 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-            white-space: pre;
-            padding: 1.25rem 1.5rem;
-            margin: 0;
+        .code-block {
+            background: #2c3e50;
+            color: #ecf0f1;
+            padding: 1rem;
+            border-radius: 8px;
+            margin: 1rem 0;
             overflow-x: auto;
-            tab-size: 4;
+            font-family: 'Courier New', monospace;
         }
 
-        .keyword { color: #ff79c6; }
-        .string { color: #f1fa8c; }
-        .comment { color: #6272a4; font-style: italic; }
-        .function { color: #50fa7b; }
-        .number { color: #bd93f9; }
-        .builtin { color: #8be9fd; }
-        .operator { color: #ff79c6; }
-        .punctuation { color: #f8f8f2; }
-
-        .diagram-container {
-            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-            border-radius: 15px;
-            padding: 25px;
-            margin: 20px 0;
-            color: white;
+        .collapsible {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 5px;
+            margin: 1rem 0;
         }
 
-        .process-flow {
+        .collapsible-header {
+            background: #e9ecef;
+            padding: 1rem;
+            cursor: pointer;
+            font-weight: bold;
+            user-select: none;
             display: flex;
+            justify-content: between;
             align-items: center;
-            justify-content: space-between;
+        }
+
+        .collapsible-header:hover {
+            background: #dee2e6;
+        }
+
+        .collapsible-content {
+            padding: 1rem;
+            display: none;
+        }
+
+        .collapsible-content.active {
+            display: block;
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .pipeline-viz {
+            display: flex;
             flex-wrap: wrap;
-            gap: 15px;
+            justify-content: space-around;
+            margin: 2rem 0;
+            gap: 1rem;
         }
 
-        .process-box {
-            background: rgba(255,255,255,0.2);
-            border: 2px solid rgba(255,255,255,0.3);
-            border-radius: 15px;
-            padding: 15px 20px;
-            backdrop-filter: blur(10px);
-            font-weight: 600;
+        .pipeline-step {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 1rem;
+            border-radius: 10px;
             text-align: center;
-            min-width: 120px;
-            transition: all 0.3s ease;
+            cursor: pointer;
+            transition: transform 0.3s, box-shadow 0.3s;
+            min-width: 150px;
+            position: relative;
         }
 
-        .process-box:hover {
-            background: rgba(255,255,255,0.3);
-            transform: scale(1.05);
+        .pipeline-step:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+
+        .pipeline-step.active {
+            background: linear-gradient(135deg, #ff6b6b, #ee5a24);
         }
 
         .arrow {
             font-size: 1.5rem;
-            color: rgba(255,255,255,0.8);
+            color: #3498db;
+            margin: 0 0.5rem;
         }
 
-        .key-tools {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            padding: 15px 20px;
+        .plot-container {
+            margin: 1.5rem 0;
+            padding: 1rem;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            background: #fafafa;
+        }
+
+        .metric-card {
+            background: white;
             border-radius: 10px;
-            margin: 15px 0;
+            padding: 1.5rem;
+            margin: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            text-align: center;
+            border-top: 4px solid #3498db;
         }
 
-        .key-tools h4 {
-            margin-bottom: 10px;
-            font-size: 1.1rem;
+        .metric-value {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #2c3e50;
+            margin-bottom: 0.5rem;
         }
 
-        .tools-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
+        .metric-label {
+            color: #7f8c8d;
+            font-size: 1rem;
         }
 
-        .tool-tag {
-            background: rgba(255,255,255,0.2);
-            padding: 5px 12px;
-            border-radius: 15px;
-            font-size: 0.85rem;
-            font-weight: 500;
-        }
-
-        .interactive-tooltip {
+        .tooltip {
             position: relative;
             display: inline-block;
-            border-bottom: 2px dotted var(--primary);
             cursor: help;
-            color: var(--primary);
-            font-weight: 500;
+            color: #3498db;
+            font-weight: bold;
         }
 
-        .tooltip-content {
+        .tooltip .tooltiptext {
             visibility: hidden;
-            opacity: 0;
+            width: 300px;
+            background-color: #2c3e50;
+            color: white;
+            text-align: left;
+            border-radius: 6px;
+            padding: 10px;
             position: absolute;
+            z-index: 1;
             bottom: 125%;
             left: 50%;
-            transform: translateX(-50%) translateY(10px);
-            background: var(--dark);
-            color: white;
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-size: 0.85rem;
-            white-space: nowrap;
-            z-index: 1000;
-            transition: all 0.2s ease;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            min-width: 200px;
-            text-align: center;
-            pointer-events: none;
+            margin-left: -150px;
+            opacity: 0;
+            transition: opacity 0.3s;
+            font-size: 0.9rem;
+            line-height: 1.4;
         }
 
-        .tooltip-content::after {
-            content: '';
-            position: absolute;
-            top: 100%;
-            left: 50%;
-            transform: translateX(-50%);
-            border-width: 6px;
-            border-style: solid;
-            border-color: var(--dark) transparent transparent transparent;
-        }
-
-        .interactive-tooltip:hover .tooltip-content {
+        .tooltip:hover .tooltiptext {
             visibility: visible;
             opacity: 1;
         }
 
-        .navigation {
-            position: fixed;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--card-bg);
-            border-radius: 2rem;
-            padding: 1rem 0.75rem;
-            box-shadow: var(--card-shadow);
-            z-index: 1000;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 0.5rem;
-            border: 1px solid var(--gray-light);
-        }
-
-        .nav-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background: var(--gray-light);
-            cursor: pointer;
-            transition: var(--transition);
-            position: relative;
-            border: 2px solid transparent;
-        }
-
-        .nav-dot.active {
-            background: var(--primary);
-            transform: scale(1.3);
-            border-color: rgba(255, 255, 255, 0.2);
-        }
-
-        .nav-dot::after {
-            content: attr(data-title);
-            position: absolute;
-            right: 2rem;
-            top: 50%;
-            transform: translateY(-50%);
-            background: var(--primary);
-            color: white;
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: var(--transition);
-        }
-
-        .nav-dot:hover::after {
-            opacity: 1;
-            right: 2.5rem;
-        }
-
-        /* Table of contents */
-        .toc {
-            background: var(--card-bg);
-            border-radius: 0.75rem;
+        .interactive-demo {
+            background: #f8f9fa;
+            border-radius: 10px;
             padding: 1.5rem;
-            margin: 2rem 0;
-            box-shadow: var(--card-shadow);
-            border: 1px solid var(--gray-light);
+            margin: 1rem 0;
         }
 
-        .toc h3 {
-            margin-top: 0;
-            margin-bottom: 1rem;
-            color: var(--primary);
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
+        .slider-container {
+            margin: 1rem 0;
         }
 
-        .toc ul {
-            list-style: none;
-            padding: 0;
-            margin: 0;
+        .slider {
+            width: 100%;
+            margin: 0.5rem 0;
+        }
+
+        .results-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 0.75rem;
+            gap: 1rem;
+            margin: 1rem 0;
         }
 
-        .toc li {
-            padding: 0.5rem 0.75rem;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            font-size: 0.95rem;
-            color: var(--text-muted);
-            border: 1px solid transparent;
-        }
-
-        .toc li:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-
-        .toc li i {
-            width: 1.25rem;
-            text-align: center;
-        }
-
-        /* Code block styling */
-        .code-container {
-            position: relative;
-            margin: 1.5rem 0;
-            border-radius: 0.5rem;
-            overflow: hidden;
-            background: var(--code-bg);
-            border: 1px solid var(--gray-light);
-        }
-
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0.5rem 1rem;
-            background: var(--code-header-bg);
-            border-bottom: 1px solid var(--gray-light);
-            font-family: 'Fira Code', monospace;
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-
-        .code-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        .code-btn {
-            background: none;
-            border: 1px solid var(--gray-light);
-            color: var(--text-muted);
-            padding: 0.25rem 0.75rem;
-            border-radius: 1rem;
-            font-size: 0.8rem;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            transition: all 0.2s ease;
-        }
-
-        .code-btn:hover {
-            background: var(--primary-light);
-            color: var(--primary);
-            border-color: var(--primary-light);
-        }
-
-        .code-btn i {
-            font-size: 0.9em;
-        }
-
-        pre {
-            margin: 0;
-            padding: 1rem;
-            overflow-x: auto;
-        }
-
-        @media (max-width: 1024px) {
-            .concept-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .flow-diagram {
-                flex-direction: column;
-            }
-            
-            .flow-step::after {
-                content: '↓';
-                right: 50%;
-                bottom: -1.5rem;
-                top: auto;
-                left: auto;
-                transform: translateX(50%);
-            }
-            
-            .navigation {
-                bottom: 1rem;
-                top: auto;
-                right: 1rem;
-                transform: none;
-                flex-direction: row;
-                padding: 0.75rem 1rem;
-                border-radius: 2rem;
-                width: auto;
-                backdrop-filter: blur(10px);
-                background: rgba(255, 255, 255, 0.8);
-            }
-
-
-            [data-theme="dark"] .navigation {
-                background: rgba(30, 30, 30, 0.8);
-            }
-
-            .nav-dot {
-                margin: 0 0.25rem;
-            }
-
-            .nav-dot::after {
-                top: -2.5rem;
-                right: 50%;
-                transform: translateX(50%);
-            }
-
-            .nav-dot:hover::after {
-                top: -3rem;
-                right: 50%;
-                transform: translateX(50%);
-            }
-        }
-
-        /* Responsive adjustments */
         @media (max-width: 768px) {
-            .toc ul {
-                grid-template-columns: 1fr;
+            .nav-menu ul {
+                flex-direction: column;
+                gap: 0.5rem;
             }
             
-            .theme-toggle {
-                bottom: 1rem;
-                left: 1rem;
-                width: 2.5rem;
-                height: 2.5rem;
+            .pipeline-viz {
+                flex-direction: column;
+                align-items: center;
             }
             
-            .toast {
-                width: 90%;
-                text-align: center;
-                padding: 0.75rem 1rem;
+            .arrow {
+                transform: rotate(90deg);
             }
-        }
-
-        @media (max-width: 640px) {
-            .header h1 {
-                font-size: 2rem;
-            }
-            
-            .header p {
-                font-size: 1rem;
-            }
-            
-            .concept-card {
-                margin: 0 -1rem;
-                border-radius: 0;
-            }
-            
-            .code-container {
-                margin: 1rem 0;
-                border-radius: 0;
-            }
-        }
-
-        .highlight {
-            background: linear-gradient(120deg, rgba(79, 70, 229, 0.2) 0%, rgba(124, 58, 237, 0.2) 100%);
-            padding: 0.15rem 0.5rem;
-            border-radius: 0.25rem;
-            font-weight: 500;
-            color: var(--primary);
-            border: 1px solid rgba(79, 70, 229, 0.3);
-        }
-
-        /* Progress bar */
-        .progress-container {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 4px;
-            background: var(--gray-light);
-            z-index: 9999;
-        }
-
-        .progress-bar {
-            height: 100%;
-            background: var(--primary);
-            width: 0;
-            transition: width 0.1s ease;
-        }
-
-        /* Theme toggle */
-        .theme-toggle {
-            position: fixed;
-            bottom: 2rem;
-            left: 2rem;
-            width: 3rem;
-            height: 3rem;
-            border-radius: 50%;
-            background: var(--card-bg);
-            border: 1px solid var(--gray-light);
-            color: var(--text);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-            transition: all 0.3s ease;
-        }
-
-        .theme-toggle:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
-        }
-
-
-        /* Toast notification */
-        .toast {
-            position: fixed;
-            bottom: 2rem;
-            left: 50%;
-            transform: translateX(-50%) translateY(100px);
-            background: var(--card-bg);
-            color: var(--text);
-            padding: 0.75rem 1.5rem;
-            border-radius: 0.5rem;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-            z-index: 2000;
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            transition: transform 0.3s ease, opacity 0.3s ease;
-            opacity: 0;
-            pointer-events: none;
-            border: 1px solid var(--gray-light);
-        }
-
-        .toast.show {
-            transform: translateX(-50%) translateY(0);
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        .toast.success {
-            background: rgba(16, 185, 129, 0.1);
-            color: var(--success);
-            border-color: rgba(16, 185, 129, 0.2);
-        }
-
-        .toast.error {
-            background: rgba(239, 68, 68, 0.1);
-            color: var(--danger);
-            border-color: rgba(239, 68, 68, 0.2);
         }
     </style>
 </head>
 <body>
-    <!-- Progress bar -->
-    <div class="progress-container">
-        <div class="progress-bar" id="progressBar"></div>
-    </div>
-
-    <!-- Theme toggle button -->
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle theme">
-        <i class="fas fa-moon"></i>
-    </button>
-
     <div class="container">
         <div class="header">
-            <h1>🚀 End-to-End ML Pipeline</h1>
-            <p>Chapter 2: From Raw Data to Production Model</p>
+            <h1>🏠 End-to-End ML Project</h1>
+            <p>California Housing Price Prediction - Interactive Guide</p>
         </div>
 
-        <!-- Table of Contents -->
-        <div class="toc">
-            <h3><i class="fas fa-list-ul"></i> Table of Contents</h3>
+        <nav class="nav-menu">
             <ul>
-                <li onclick="scrollToSection('get-data')">
-                    <i class="fas fa-database"></i> 1. Get the Data
-                </li>
-                <li onclick="scrollToSection('eda')">
-                    <i class="fas fa-chart-bar"></i> 2. Exploratory Data Analysis
-                </li>
-                <li onclick="scrollToSection('split')">
-                    <i class="fas fa-cut"></i> 3. Train-Test Split
-                </li>
-                <li onclick="scrollToSection('imputer')">
-                    <i class="fas fa-tools"></i> 4. Handle Missing Values
-                </li>
-                <li onclick="scrollToSection('scaler')">
-                    <i class="fas fa-balance-scale"></i> 5. Feature Scaling
-                </li>
-                <li onclick="scrollToSection('pipeline')">
-                    <i class="fas fa-project-diagram"></i> 6. ML Pipeline
-                </li>
+                <li><a href="#step1">Frame Problem</a></li>
+                <li><a href="#step2">Get Data</a></li>
+                <li><a href="#step3">Explore Data</a></li>
+                <li><a href="#step4">Prepare Data</a></li>
+                <li><a href="#step5">Train Model</a></li>
+                <li><a href="#step6">Fine-tune</a></li>
+                <li><a href="#step7">Evaluate</a></li>
             </ul>
-        </div>
+        </nav>
 
-        <div class="pipeline-overview">
-            <h2 style="text-align: center; margin-bottom: 20px; color: #333;">Complete Pipeline Flow</h2>
-            <div class="flow-diagram">
-                <div class="flow-step">📊 Get Data</div>
-                <div class="flow-step">🔍 EDA</div>
-                <div class="flow-step">✂️ Split</div>
-                <div class="flow-step">🔧 Preprocess</div>
-                <div class="flow-step">🤖 Model</div>
-                <div class="flow-step">📈 Evaluate</div>
+        <!-- Pipeline Overview -->
+        <div class="step">
+            <h2>🔄 ML Pipeline Overview</h2>
+            <div class="pipeline-viz">
+                <div class="pipeline-step" onclick="scrollToStep(1)">
+                    <div>📋</div>
+                    <div>Frame Problem</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(2)">
+                    <div>📊</div>
+                    <div>Get Data</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(3)">
+                    <div>🔍</div>
+                    <div>Explore</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(4)">
+                    <div>🛠️</div>
+                    <div>Prepare</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(5)">
+                    <div>🤖</div>
+                    <div>Train</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(6)">
+                    <div>⚙️</div>
+                    <div>Fine-tune</div>
+                </div>
+                <div class="arrow">→</div>
+                <div class="pipeline-step" onclick="scrollToStep(7)">
+                    <div>🎯</div>
+                    <div>Evaluate</div>
+                </div>
             </div>
         </div>
 
-        <div class="concept-grid">
-            <!-- Data Loading -->
-            <div class="concept-card" id="get-data">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #ff6b6b, #ff8e8e);">📊</div>
-                    <div class="concept-title">1. Get the Data</div>
+        <!-- Step 1: Frame the Problem -->
+        <div class="step" id="step1">
+            <div class="step-header">
+                <div class="step-number">1</div>
+                <div class="step-title">Frame the Problem</div>
+            </div>
+
+            <div class="concept-box problem">
+                <div class="concept-title">🎯 Problem Definition</div>
+                <p>Predict California housing prices based on district-level features. This is a <strong>supervised learning</strong> task since we have labeled data (actual prices).</p>
+            </div>
+
+            <div class="concept-box solution">
+                <div class="concept-title">🔧 Solution Approach</div>
+                <ul>
+                    <li><strong>Task Type:</strong> Regression (predicting continuous values)</li>
+                    <li><strong>Performance Measure:</strong> RMSE (Root Mean Square Error)</li>
+                    <li><strong>Learning Type:</strong> Batch learning (train on entire dataset)</li>
+                </ul>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>🤔 Why These Choices?</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="problem-badge">Problem: Need accessible, organized dataset</div>
-                <div class="solution-text">
-                    Loads and organizes data from various sources (CSV, databases) for analysis using pandas and sklearn datasets.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Tools:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">pandas.read_csv()</span>
-                        <span class="tool-tag">sklearn.datasets</span>
-                    </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Data Source<br>(CSV, DB)</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Load Data<br>(pandas)</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">DataFrame</div>
-                    </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                    </div>
-                    <div class="code"><span class="keyword">import</span> <span class="string">pandas</span> <span class="keyword">as</span> <span class="string">pd</span>
-<span class="comment"># Load dataset</span>
-data = pd.<span class="function">read_csv</span>(<span class="string">"housing.csv"</span>)
-X, y = data.<span class="function">drop</span>(<span class="string">"target"</span>, axis=<span class="number">1</span>), data[<span class="string">"target"</span>]</div>
+                <div class="collapsible-content">
+                    <p><strong>Regression vs Classification:</strong> We're predicting house prices (continuous values), not categories.</p>
+                    <p><strong>RMSE vs MAE:</strong> RMSE penalizes large errors more heavily, which is important for housing prices where large errors are costly.</p>
+                    <p><strong>Batch vs Online Learning:</strong> Housing data doesn't change rapidly, so batch learning is sufficient.</p>
                 </div>
             </div>
 
-            <!-- EDA -->
-            <div class="concept-card" id="eda">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #4ecdc4, #44a08d);">🔍</div>
-                    <div class="concept-title">2. Exploratory Data Analysis</div>
+            <div class="interactive-demo">
+                <h4>🎮 Interactive: Problem Type Selector</h4>
+                <p>Select different scenarios to see how the problem type changes:</p>
+                <select id="problemSelector" onchange="updateProblemType()">
+                    <option value="regression">House Price Prediction</option>
+                    <option value="classification">Spam Email Detection</option>
+                    <option value="clustering">Customer Segmentation</option>
+                </select>
+                <div id="problemTypeResult" style="margin-top: 1rem; padding: 1rem; background: #e3f2fd; border-radius: 5px;">
+                    <strong>Task:</strong> Regression | <strong>Learning:</strong> Supervised | <strong>Metric:</strong> RMSE
                 </div>
-                <div class="problem-badge">Problem: Unknown data patterns and quality issues</div>
-                <div class="solution-text">
-                    Visualizes data to uncover trends, distributions, outliers, and relationships using statistical plots and summary metrics.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Tools:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">matplotlib</span>
-                        <span class="tool-tag">seaborn</span>
-                        <span class="tool-tag">pandas.describe()</span>
-                    </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Raw Data</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">EDA<br>(Plots, Stats)</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Insights</div>
-                    </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                    </div>
-                    <div class="code"><span class="keyword">import</span> <span class="string">seaborn</span> <span class="keyword">as</span> <span class="string">sns</span>
-<span class="keyword">import</span> <span class="string">matplotlib.pyplot</span> <span class="keyword">as</span> <span class="string">plt</span>
+            </div>
+        </div>
 
-<span class="comment"># Plot distribution</span>
-sns.<span class="function">histplot</span>(data[<span class="string">"median_income"</span>])
-plt.<span class="function">show</span>()
+        <!-- Step 2: Get the Data -->
+        <div class="step" id="step2">
+            <div class="step-header">
+                <div class="step-number">2</div>
+                <div class="step-title">Get the Data</div>
+            </div>
 
-<span class="comment"># Summary statistics</span>
-<span class="function">print</span>(data.<span class="function">describe</span>())</div>
+            <div class="concept-box">
+                <div class="concept-title">📊 Data Acquisition</div>
+                <p>Load the California housing dataset and perform initial inspection.</p>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>💻 Code: Loading Data</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="code-block">
+import pandas as pd
+import numpy as np
+from sklearn.datasets import fetch_california_housing
+
+# Load the dataset
+housing = fetch_california_housing(as_frame=True)
+housing_df = housing.frame
+
+# Basic info
+print(f"Shape: {housing_df.shape}")
+print(f"Features: {housing.feature_names}")
+print(f"Target: {housing.target_names}")
+                    </div>
                 </div>
             </div>
 
-            <!-- Train-Test Split -->
-            <div class="concept-card" id="split">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #45b7d1, #96c93d);">✂️</div>
-                    <div class="concept-title">3. Train-Test Split</div>
-                </div>
-                <div class="problem-badge">Problem: Need unseen data for model evaluation</div>
-                <div class="solution-text">
-                    Splits dataset into training and testing portions to evaluate model generalization on unseen data.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Settings:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">test_size=0.2</span>
-                        <span class="tool-tag">random_state=42</span>
-                        <span class="tool-tag">stratify=y</span>
+            <div class="concept-box solution">
+                <div class="concept-title">📋 Dataset Overview</div>
+                <div class="results-grid">
+                    <div class="metric-card">
+                        <div class="metric-value">20,640</div>
+                        <div class="metric-label">Total Samples</div>
                     </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Full Dataset</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Training Set<br>(80%)</div>
-                        <div class="process-box">Test Set<br>(20%)</div>
+                    <div class="metric-card">
+                        <div class="metric-value">8</div>
+                        <div class="metric-label">Features</div>
                     </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
+                    <div class="metric-card">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Missing Values</div>
                     </div>
-                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.model_selection</span> <span class="keyword">import</span> <span class="string">train_test_split</span>
-
-X_train, X_test, y_train, y_test = <span class="function">train_test_split</span>(
-    X, y, test_size=<span class="number">0.2</span>, random_state=<span class="number">42</span>
-)</div>
                 </div>
             </div>
 
-            <!-- SimpleImputer -->
-            <div class="concept-card" id="imputer">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #f093fb, #f5576c);">🔧</div>
-                    <div class="concept-title">4. SimpleImputer</div>
-                </div>
-                <div class="problem-badge">Problem: Missing values break models</div>
-                <div class="solution-text">
-                    Fills missing data (NaN values) using strategies like mean, median, or most frequent value to ensure complete datasets.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Strategies:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">"mean"</span>
-                        <span class="tool-tag">"median"</span>
-                        <span class="tool-tag">"most_frequent"</span>
-                        <span class="tool-tag">"constant"</span>
-                    </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Data with<br>NaN</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">SimpleImputer</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Complete<br>Data</div>
-                    </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                    </div>
-                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.impute</span> <span class="keyword">import</span> <span class="string">SimpleImputer</span>
+            <div class="tooltip">
+                Stratified Sampling
+                <span class="tooltiptext">
+                    We use stratified sampling to ensure our train/test split maintains the same distribution of income categories as the full dataset. This prevents sampling bias and ensures our test set is representative.
+                </span>
+            </div>
+            <p> is crucial for maintaining data distribution across train/test splits.</p>
+        </div>
 
-imputer = <span class="function">SimpleImputer</span>(strategy=<span class="string">"mean"</span>)
-imputer.<span class="function">fit</span>(X_train)  <span class="comment"># Learn mean</span>
-X_filled = imputer.<span class="function">transform</span>(X_train)  <span class="comment"># Fill NaNs</span></div>
+        <!-- Step 3: Explore the Data -->
+        <div class="step" id="step3">
+            <div class="step-header">
+                <div class="step-number">3</div>
+                <div class="step-title">Explore the Data</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">🔍 Exploratory Data Analysis</div>
+                <p>Understand the data through visualizations and statistical analysis.</p>
+            </div>
+
+            <div class="plot-container">
+                <h4>📊 Interactive: Housing Price Distribution</h4>
+                <div id="histogramPlot" style="height: 400px;"></div>
+            </div>
+
+            <div class="plot-container">
+                <h4>🗺️ Geographic Distribution</h4>
+                <div id="scatterPlot" style="height: 400px;"></div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>🔗 Code: Correlation Analysis</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="code-block">
+# Correlation with target
+correlations = housing_df.corr()['MedHouseVal'].sort_values(ascending=False)
+print("Top correlations with house prices:")
+print(correlations)
+
+# Create correlation heatmap
+import seaborn as sns
+import matplotlib.pyplot as plt
+plt.figure(figsize=(10, 8))
+sns.heatmap(housing_df.corr(), annot=True, cmap='coolwarm', center=0)
+plt.title('Feature Correlation Matrix')
+plt.show()
+                    </div>
                 </div>
             </div>
 
-            <!-- StandardScaler -->
-            <div class="concept-card" id="scaler">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #667eea, #764ba2);">⚖️</div>
-                    <div class="concept-title">5. StandardScaler</div>
-                </div>
-                <div class="problem-badge">Problem: Features with different scales confuse models</div>
-                <div class="solution-text">
-                    Standardizes features to have mean=0 and std=1, ensuring all features contribute equally to model training.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Settings:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">with_mean=True</span>
-                        <span class="tool-tag">with_std=True</span>
-                    </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Uneven<br>Features</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">StandardScaler</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Scaled<br>Features</div>
-                    </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                    </div>
-                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.preprocessing</span> <span class="keyword">import</span> <span class="string">StandardScaler</span>
+            <div class="concept-box solution">
+                <div class="concept-title">🎯 Key Insights</div>
+                <ul>
+                    <li><strong>Median Income</strong> has the strongest correlation with house prices (0.69)</li>
+                    <li><strong>Geographic clustering</strong> visible in coastal areas (higher prices)</li>
+                    <li><strong>Room ratios</strong> matter more than absolute counts</li>
+                    <li>Some features show <strong>tail-heavy distributions</strong> (may need transformation)</li>
+                </ul>
+            </div>
+        </div>
 
-scaler = <span class="function">StandardScaler</span>()
-scaler.<span class="function">fit</span>(X_train)  <span class="comment"># Learn mean/std</span>
-X_scaled = scaler.<span class="function">transform</span>(X_train)  <span class="comment"># Scale</span></div>
+        <!-- Step 4: Prepare the Data -->
+        <div class="step" id="step4">
+            <div class="step-header">
+                <div class="step-number">4</div>
+                <div class="step-title">Prepare the Data</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">🛠️ Data Preprocessing Pipeline</div>
+                <p>Transform raw data into a format suitable for machine learning algorithms.</p>
+            </div>
+
+            <div class="interactive-demo">
+                <h4>⚙️ Interactive: Preprocessing Steps</h4>
+                <div class="pipeline-viz">
+                    <div class="pipeline-step" onclick="highlightStep('missing')">
+                        <div>❓</div>
+                        <div>Handle Missing</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="pipeline-step" onclick="highlightStep('categorical')">
+                        <div>🏷️</div>
+                        <div>Encode Categorical</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="pipeline-step" onclick="highlightStep('scaling')">
+                        <div>📏</div>
+                        <div>Scale Features</div>
+                    </div>
+                    <div class="arrow">→</div>
+                    <div class="pipeline-step" onclick="highlightStep('engineering')">
+                        <div>🔧</div>
+                        <div>Feature Engineering</div>
+                    </div>
+                </div>
+                <div id="stepDetails" style="margin-top: 1rem; padding: 1rem; background: #f8f9fa; border-radius: 5px;">
+                    Click on a preprocessing step above to see details!
                 </div>
             </div>
 
-            <!-- Pipeline -->
-            <div class="concept-card" id="pipeline">
-                <div class="concept-header">
-                    <div class="concept-icon" style="background: linear-gradient(135deg, #ff9a9e, #fecfef);">🔗</div>
-                    <div class="concept-title">6. Pipeline</div>
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>🔧 Code: Complete Pipeline</span>
+                    <span class="toggle-icon">▼</span>
                 </div>
-                <div class="problem-badge">Problem: Manual preprocessing is error-prone</div>
-                <div class="solution-text">
-                    Chains preprocessing and modeling steps into a single workflow, preventing <span class="interactive-tooltip">data leakage<span class="tooltip-content">When information from test set inadvertently influences training</span></span> and ensuring reproducibility.
-                </div>
-                <div class="key-tools">
-                    <h4>🛠️ Key Components:</h4>
-                    <div class="tools-list">
-                        <span class="tool-tag">steps=[("name", transformer)]</span>
-                        <span class="tool-tag">fit() & predict()</span>
-                    </div>
-                </div>
-                <div class="diagram-container">
-                    <div class="process-flow">
-                        <div class="process-box">Raw Data</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Imputer</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Preprocessor</div>
-                        <div class="arrow">→</div>
-                        <div class="process-box">Model</div>
-                    </div>
-                </div>
-                <div class="code-container">
-                    <div class="code-header">
-                        <div class="code-dots">
-                            <div class="dot red"></div>
-                            <div class="dot yellow"></div>
-                            <div class="dot green"></div>
-                        </div>
-                    </div>
-                    <div class="code"><span class="keyword">from</span> <span class="string">sklearn.pipeline</span> <span class="keyword">import</span> <span class="string">Pipeline</span>
-<span class="keyword">from</span> <span class="string">sklearn.linear_model</span> <span class="keyword">import</span> <span class="string">LinearRegression</span>
+                <div class="collapsible-content">
+                    <div class="code-block">
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import StandardScaler
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
 
-pipeline = <span class="function">Pipeline</span>([
-    (<span class="string">"imputer"</span>, <span class="function">SimpleImputer</span>(strategy=<span class="string">"mean"</span>)),
-    (<span class="string">"preprocessor"</span>, preprocessor),
-    (<span class="string">"model"</span>, <span class="function">LinearRegression</span>())
+# Create preprocessing pipeline
+numerical_features = ['longitude', 'latitude', 'housing_median_age', 
+                     'total_rooms', 'total_bedrooms', 'population', 
+                     'households', 'median_income']
+
+numerical_pipeline = Pipeline([
+    ('imputer', SimpleImputer(strategy='median')),
+    ('scaler', StandardScaler())
 ])
 
-pipeline.<span class="function">fit</span>(X_train, y_train)  <span class="comment"># Fit all steps</span>
-y_pred = pipeline.<span class="function">predict</span>(X_test)  <span class="comment"># Predict</span></div>
+# Feature engineering: add room ratios
+def add_room_ratios(X):
+    rooms_per_household = X[:, 3] / X[:, 6]
+    bedrooms_per_room = X[:, 4] / X[:, 3]
+    population_per_household = X[:, 5] / X[:, 6]
+    return np.c_[X, rooms_per_household, bedrooms_per_room, population_per_household]
+
+preprocessor = ColumnTransformer([
+    ('num', numerical_pipeline, numerical_features)
+])
+                    </div>
                 </div>
+            </div>
+
+            <div class="concept-box solution">
+                <div class="concept-title">✅ Preprocessing Benefits</div>
+                <ul>
+                    <li><strong>Imputation:</strong> Handles missing values without losing data</li>
+                    <li><strong>Scaling:</strong> Ensures all features contribute equally to distance-based algorithms</li>
+                    <li><strong>Feature Engineering:</strong> Creates meaningful ratios that often predict better than raw counts</li>
+                    <li><strong>Pipeline:</strong> Ensures consistent preprocessing for training and inference</li>
+                </ul>
             </div>
         </div>
 
-        <!-- Navigation -->
-        <div class="navigation">
-            <div class="nav-dot active" onclick="scrollToSection('get-data')" data-title="Get Data"></div>
-            <div class="nav-dot" onclick="scrollToSection('eda')" data-title="EDA"></div>
-            <div class="nav-dot" onclick="scrollToSection('split')" data-title="Train-Test Split"></div>
-            <div class="nav-dot" onclick="scrollToSection('imputer')" data-title="Handle Missing Values"></div>
-            <div class="nav-dot" onclick="scrollToSection('scaler')" data-title="Feature Scaling"></div>
-            <div class="nav-dot" onclick="scrollToSection('pipeline')" data-title="ML Pipeline"></div>
+        <!-- Step 5: Train Models -->
+        <div class="step" id="step5">
+            <div class="step-header">
+                <div class="step-number">5</div>
+                <div class="step-title">Select and Train Models</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">🤖 Model Selection</div>
+                <p>Compare different algorithms to find the best starting point.</p>
+            </div>
+
+            <div class="interactive-demo">
+                <h4>🏁 Model Comparison</h4>
+                <div class="results-grid">
+                    <div class="metric-card" onclick="selectModel('linear')">
+                        <div class="metric-value">68,628</div>
+                        <div class="metric-label">Linear Regression<br>RMSE</div>
+                    </div>
+                    <div class="metric-card" onclick="selectModel('tree')">
+                        <div class="metric-value">0</div>
+                        <div class="metric-label">Decision Tree<br>RMSE (overfitting!)</div>
+                    </div>
+                    <div class="metric-card" onclick="selectModel('forest')">
+                        <div class="metric-value">18,603</div>
+                        <div class="metric-label">Random Forest<br>RMSE ⭐</div>
+                    </div>
+                </div>
+                <div id="modelDetails" style="margin-top: 1rem; padding: 1rem; background: #e8f5e8; border-radius: 5px;">
+                    <strong>Random Forest</strong> shows the best performance with good generalization!
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>📊 Code: Cross-Validation</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="code-block">
+from sklearn.model_selection import cross_val_score
+from sklearn.ensemble import RandomForestRegressor
+from sklearn.linear_model import LinearRegression
+from sklearn.tree import DecisionTreeRegressor
+
+# Test multiple models
+models = {
+    'Linear Regression': LinearRegression(),
+    'Decision Tree': DecisionTreeRegressor(),
+    'Random Forest': RandomForestRegressor(n_estimators=100, random_state=42)
+}
+
+for name, model in models.items():
+    scores = cross_val_score(model, X_train_prepared, y_train, 
+                           scoring='neg_mean_squared_error', cv=10)
+    rmse_scores = np.sqrt(-scores)
+    print(f"{name}: {rmse_scores.mean():.0f} (+/- {rmse_scores.std() * 2:.0f})")
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-box problem">
+                <div class="concept-title">⚠️ Overfitting Alert</div>
+                <p>Decision Tree shows perfect training performance (RMSE = 0) but poor generalization. This is a classic sign of overfitting!</p>
+            </div>
         </div>
 
-        <!-- Toast Notification -->
-        <div class="toast" id="toast">
-            <i class="fas fa-check-circle"></i>
-            <span id="toastMessage">Copied to clipboard!</span>
+        <!-- Step 6: Fine-tune the Model -->
+        <div class="step" id="step6">
+            <div class="step-header">
+                <div class="step-number">6</div>
+                <div class="step-title">Fine-tune the Model</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">⚙️ Hyperparameter Tuning</div>
+                <p>Optimize model performance through systematic parameter search.</p>
+            </div>
+
+            <div class="interactive-demo">
+                <h4>🎛️ Interactive: Hyperparameter Impact</h4>
+                <div class="slider-container">
+                    <label for="nEstimators">Number of Trees: <span id="nEstimatorsValue">100</span></label>
+                    <input type="range" id="nEstimators" class="slider" min="10" max="200" value="100" 
+                           oninput="updateHyperparameter('n_estimators', this.value)">
+                </div>
+                <div class="slider-container">
+                    <label for="maxDepth">Maximum Depth: <span id="maxDepthValue">10</span></label>
+                    <input type="range" id="maxDepth" class="slider" min="3" max="20" value="10" 
+                           oninput="updateHyperparameter('max_depth', this.value)">
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value" id="estimatedRMSE">18,603</div>
+                    <div class="metric-label">Estimated RMSE</div>
+                </div>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>🔍 Code: Grid Search</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="code-block">
+from sklearn.model_selection import GridSearchCV
+
+# Define parameter grid
+param_grid = {
+    'n_estimators': [50, 100, 200],
+    'max_depth': [None, 10, 20],
+    'min_samples_split': [2, 5, 10],
+    'min_samples_leaf': [1, 2, 4]
+}
+
+# Grid search with cross-validation
+grid_search = GridSearchCV(
+    RandomForestRegressor(random_state=42),
+    param_grid,
+    cv=5,
+    scoring='neg_mean_squared_error',
+    n_jobs=-1
+)
+
+grid_search.fit(X_train_prepared, y_train)
+print("Best parameters:", grid_search.best_params_)
+print("Best RMSE:", np.sqrt(-grid_search.best_score_))
+                    </div>
+                </div>
+            </div>
+
+            <div class="concept-box solution">
+                <div class="concept-title">🎯 Best Parameters Found</div>
+                <ul>
+                    <li><strong>n_estimators:</strong> 100 (more trees = better performance, but diminishing returns)</li>
+                    <li><strong>max_depth:</strong> None (let trees grow deep, but monitor overfitting)</li>
+                    <li><strong>min_samples_split:</strong> 2 (allow fine-grained splits)</li>
+                    <li><strong>Final RMSE:</strong> ~47,730 (significant improvement!)</li>
+                </ul>
+            </div>
+
+            <div class="tooltip">
+                Feature Importance
+                <span class="tooltiptext">
+                    Random Forest provides feature importance scores based on how much each feature decreases impurity when used for splits. Median income is typically the most important feature for housing prices.
+                </span>
+            </div>
+            <p> analysis reveals which features drive predictions most.</p>
+        </div>
+
+        <!-- Step 7: Evaluate and Launch -->
+        <div class="step" id="step7">
+            <div class="step-header">
+                <div class="step-number">7</div>
+                <div class="step-title">Evaluate and Launch</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">🎯 Final Evaluation</div>
+                <p>Test the final model on unseen data and prepare for deployment.</p>
+            </div>
+
+            <div class="plot-container">
+                <h4>📈 Prediction vs Actual</h4>
+                <div id="predictionPlot" style="height: 400px;"></div>
+            </div>
+
+                            <div class="results-grid">
+                <div class="metric-card">
+                    <div class="metric-value">47,730</div>
+                    <div class="metric-label">Test RMSE</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">0.64</div>
+                    <div class="metric-label">R² Score</div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-value">±15%</div>
+                    <div class="metric-label">Typical Error</div>
+                </div>
+            </div>
+
+            <div class="concept-box solution">
+                <div class="concept-title">✅ Model Performance Summary</div>
+                <ul>
+                    <li><strong>RMSE:</strong> $47,730 - Most predictions within ~$48k of actual price</li>
+                    <li><strong>R² Score:</strong> 0.64 - Model explains 64% of price variance</li>
+                    <li><strong>Business Impact:</strong> Good enough for initial property valuations</li>
+                    <li><strong>Error Analysis:</strong> Larger errors on expensive properties (>$500k)</li>
+                </ul>
+            </div>
+
+            <div class="collapsible">
+                <div class="collapsible-header" onclick="toggleCollapsible(this)">
+                    <span>🚀 Code: Production Pipeline</span>
+                    <span class="toggle-icon">▼</span>
+                </div>
+                <div class="collapsible-content">
+                    <div class="code-block">
+import joblib
+from sklearn.pipeline import Pipeline
+
+# Create full pipeline (preprocessing + model)
+full_pipeline = Pipeline([
+    ('preprocessing', preprocessor),
+    ('random_forest', grid_search.best_estimator_)
+])
+
+# Train on full training set
+full_pipeline.fit(X_train, y_train)
+
+# Save model for production
+joblib.dump(full_pipeline, 'housing_model.pkl')
+
+# Example prediction function
+def predict_price(longitude, latitude, housing_median_age, 
+                 total_rooms, total_bedrooms, population, 
+                 households, median_income):
+    features = np.array([[longitude, latitude, housing_median_age,
+                         total_rooms, total_bedrooms, population,
+                         households, median_income]])
+    return full_pipeline.predict(features)[0]
+
+# Test prediction
+sample_price = predict_price(-122.23, 37.88, 41, 880, 129, 322, 126, 8.3252)
+print(f"Predicted price: ${sample_price:,.2f}")
+                    </div>
+                </div>
+            </div>
+
+            <div class="interactive-demo">
+                <h4>🏠 Try the Model!</h4>
+                <p>Adjust the sliders to see how different features affect house prices:</p>
+                
+                <div class="slider-container">
+                    <label for="medianIncome">Median Income (x$10k): <span id="medianIncomeValue">5.0</span></label>
+                    <input type="range" id="medianIncome" class="slider" min="0.5" max="15" step="0.1" value="5.0" 
+                           oninput="updatePrediction()">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="houseAge">House Age (years): <span id="houseAgeValue">20</span></label>
+                    <input type="range" id="houseAge" class="slider" min="1" max="52" value="20" 
+                           oninput="updatePrediction()">
+                </div>
+                
+                <div class="slider-container">
+                    <label for="roomsPerHousehold">Rooms per Household: <span id="roomsPerHouseholdValue">6</span></label>
+                    <input type="range" id="roomsPerHousehold" class="slider" min="3" max="15" step="0.1" value="6" 
+                           oninput="updatePrediction()">
+                </div>
+
+                <div class="metric-card">
+                    <div class="metric-value" id="predictedPrice">$280,000</div>
+                    <div class="metric-label">Predicted House Price</div>
+                </div>
+            </div>
+
+            <div class="concept-box problem">
+                <div class="concept-title">🚨 Limitations & Next Steps</div>
+                <ul>
+                    <li><strong>Data Age:</strong> 1990 census data - need current data for production</li>
+                    <li><strong>Feature Gaps:</strong> Missing school quality, crime rates, amenities</li>
+                    <li><strong>Model Bias:</strong> May underperform on luxury properties</li>
+                    <li><strong>Improvements:</strong> Try ensemble methods, deep learning, or more features</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Summary Section -->
+        <div class="step">
+            <div class="step-header">
+                <div class="step-number">📚</div>
+                <div class="step-title">Key Takeaways</div>
+            </div>
+
+            <div class="concept-box">
+                <div class="concept-title">🎯 ML Project Lessons</div>
+                <ul>
+                    <li><strong>Problem Framing:</strong> Clear problem definition guides all subsequent decisions</li>
+                    <li><strong>Data Quality:</strong> Good data beats fancy algorithms - always explore first</li>
+                    <li><strong>Feature Engineering:</strong> Domain knowledge creates powerful features (room ratios)</li>
+                    <li><strong>Model Selection:</strong> Start simple, compare multiple approaches</li>
+                    <li><strong>Validation:</strong> Cross-validation prevents overfitting surprises</li>
+                    <li><strong>Iteration:</strong> ML is iterative - always room for improvement</li>
+                </ul>
+            </div>
+
+            <div class="concept-box solution">
+                <div class="concept-title">🔄 The ML Workflow</div>
+                <p>This project demonstrates the complete ML workflow: from business problem to deployed model. Each step builds on the previous, and iteration is key to success.</p>
+            </div>
         </div>
     </div>
 
     <script>
-        // Add Font Awesome script for icons
-        document.write('<script src="https://kit.fontawesome.com/a076d05399.js" crossorigin="anonymous"><\/script>');
-        
-        // Add Fira Code font for code blocks
-        const link = document.createElement('link');
-        link.href = 'https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500&display=swap';
-        link.rel = 'stylesheet';
-        document.head.appendChild(link);
+        // Sample California housing data for visualizations
+        const housingData = [
+            { longitude: -122.23, latitude: 37.88, price: 452600, income: 8.3252, age: 41 },
+            { longitude: -122.22, latitude: 37.86, price: 358500, income: 8.3014, age: 21 },
+            { longitude: -122.24, latitude: 37.85, price: 352100, income: 7.2574, age: 52 },
+            { longitude: -122.25, latitude: 37.85, price: 341300, income: 5.6431, age: 52 },
+            { longitude: -122.25, latitude: 37.84, price: 342200, income: 3.8462, age: 52 },
+            { longitude: -121.22, latitude: 39.43, price: 67500, income: 1.6812, age: 25 },
+            { longitude: -121.32, latitude: 39.43, price: 85800, income: 1.9911, age: 18 },
+            { longitude: -121.24, latitude: 39.37, price: 69400, income: 2.3886, age: 16 },
+            { longitude: -118.25, latitude: 34.05, price: 344700, income: 5.7192, age: 15 },
+            { longitude: -118.26, latitude: 34.04, price: 249700, income: 4.3299, age: 19 }
+        ];
 
-        // DOM Elements
-        const progressBar = document.getElementById('progressBar');
-        const themeToggle = document.getElementById('themeToggle');
-        const html = document.documentElement;
-        const navDots = document.querySelectorAll('.nav-dot');
-        const sections = document.querySelectorAll('.concept-card');
-        const codeBlocks = document.querySelectorAll('.code');
-        const toast = document.getElementById('toast');
-        const toastMessage = document.getElementById('toastMessage');
-
-        // Theme Management
-        function setTheme(isDark) {
-            if (isDark) {
-                html.setAttribute('data-theme', 'dark');
-                themeToggle.innerHTML = '<i class="fas fa-sun"></i>';
-                localStorage.setItem('theme', 'dark');
-            } else {
-                html.setAttribute('data-theme', 'light');
-                themeToggle.innerHTML = '<i class="fas fa-moon"></i>';
-                localStorage.setItem('theme', 'light');
-            }
-        }
-
-
-        // Initialize theme from localStorage or prefer-color-scheme
-        const savedTheme = localStorage.getItem('theme') || 
-                          (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
-        setTheme(savedTheme === 'dark');
-
-        // Toggle theme
-        themeToggle.addEventListener('click', () => {
-            const isDark = html.getAttribute('data-theme') !== 'dark';
-            setTheme(isDark);
-        });
-
-
-        // Smooth scrolling for anchor links
-        function scrollToSection(sectionId, event = null) {
-            if (event) event.preventDefault();
-            const element = document.getElementById(sectionId);
-            if (element) {
-                const headerOffset = 100;
-                const elementPosition = element.getBoundingClientRect().top;
-                const offsetPosition = elementPosition + window.pageYOffset - headerOffset;
-
-                window.scrollTo({
-                    top: offsetPosition,
-                    behavior: 'smooth'
-                });
-
-                // Update URL without page reload
-                history.pushState(null, null, `#${sectionId}`);
-            }
-        }
-
-
-        // Update active section based on scroll position
-        function updateActiveSection() {
-            let currentSection = '';
-            const scrollPosition = window.scrollY + 150;
-
-            sections.forEach(section => {
-                const sectionTop = section.offsetTop;
-                const sectionHeight = section.offsetHeight;
-                
-                if (scrollPosition >= sectionTop && scrollPosition < sectionTop + sectionHeight) {
-                    currentSection = section.id;
-                }
-            });
-
-            // Update navigation dots
-            navDots.forEach(dot => {
-                dot.classList.remove('active');
-                if (dot.getAttribute('onclick').includes(currentSection)) {
-                    dot.classList.add('active');
-                }
-            });
-
-            // Update URL without page reload
-            if (currentSection) {
-                history.replaceState(null, null, `#${currentSection}`);
-            }
-        }
-
-
-        // Update progress bar on scroll
-        function updateProgressBar() {
-            const winScroll = document.body.scrollTop || document.documentElement.scrollTop;
-            const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrolled = (winScroll / height) * 100;
-            progressBar.style.width = scrolled + '%';
-        }
-
-
-        // Copy code to clipboard
-        function setupCodeCopy() {
-            codeBlocks.forEach(block => {
-                const container = block.closest('.code-container');
-                if (!container) return;
-
-                const header = container.querySelector('.code-header') || 
-                              container.insertBefore(document.createElement('div'), block);
-                header.className = 'code-header';
-                
-                const language = block.getAttribute('data-lang') || 'python';
-                const copyBtn = document.createElement('button');
-                copyBtn.className = 'code-btn';
-                copyBtn.innerHTML = '<i class="far fa-copy"></i> Copy';
-                copyBtn.onclick = () => copyToClipboard(block.textContent);
-                
-                header.innerHTML = '';
-                header.innerHTML = `
-                    <span>${language}</span>
-                    <div class="code-actions">
-                        <button class="code-btn" onclick="copyToClipboard(this, '${block.id}')">
-                            <i class="far fa-copy"></i> Copy
-                        </button>
-                    </div>
-                `;
-            });
-        }
-
-
-        // Copy text to clipboard and show toast
-        function copyToClipboard(button, codeId) {
-            const codeBlock = document.getElementById(codeId);
-            if (!codeBlock) return;
-            
-            const code = codeBlock.textContent;
-            navigator.clipboard.writeText(code).then(() => {
-                showToast('Code copied to clipboard!', 'success');
-                
-                // Update button text temporarily
-                const icon = button.querySelector('i');
-                const originalIcon = icon.className;
-                icon.className = 'fas fa-check';
-                button.disabled = true;
-                
-                setTimeout(() => {
-                    icon.className = originalIcon;
-                    button.disabled = false;
-                }, 2000);
-                
-            }).catch(err => {
-                showToast('Failed to copy code', 'error');
-                console.error('Failed to copy text: ', err);
-            });
-        }
-
-
-        // Show toast notification
-        function showToast(message, type = 'success') {
-            const toast = document.getElementById('toast');
-            const toastMessage = document.getElementById('toastMessage');
-            const icon = toast.querySelector('i');
-            
-            // Set message and type
-            toastMessage.textContent = message;
-            toast.className = `toast ${type}`;
-            
-            // Set icon based on type
-            if (type === 'success') {
-                icon.className = 'fas fa-check-circle';
-            } else if (type === 'error') {
-                icon.className = 'fas fa-exclamation-circle';
-            }
-            
-            // Show toast
-            toast.classList.add('show');
-            
-            // Hide after delay
-            setTimeout(() => {
-                toast.classList.remove('show');
-            }, 3000);
-        }
-
-
-        // Initialize tooltips
-        function initTooltips() {
-            const tooltips = document.querySelectorAll('.interactive-tooltip');
-            tooltips.forEach(tooltip => {
-                tooltip.addEventListener('mouseenter', (e) => {
-                    const tooltipContent = tooltip.querySelector('.tooltip-content');
-                    if (tooltipContent) {
-                        tooltipContent.style.visibility = 'visible';
-                        tooltipContent.style.opacity = '1';
-                        tooltipContent.style.transform = 'translateX(-50%) translateY(0)';
-                    }
-                });
-
-                tooltip.addEventListener('mouseleave', (e) => {
-                    const tooltipContent = tooltip.querySelector('.tooltip-content');
-                    if (tooltipContent) {
-                        tooltipContent.style.visibility = 'hidden';
-                        tooltipContent.style.opacity = '0';
-                        tooltipContent.style.transform = 'translateX(-50%) translateY(10px)';
-                    }
-                });
-            });
-        }
-
-
-        // Animate elements on scroll
-        function initScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
+        // Initialize plots
+        function initializePlots() {
+            // Histogram plot
+            const priceData = housingData.map(d => d.price);
+            const histogramTrace = {
+                x: priceData,
+                type: 'histogram',
+                nbinsx: 20,
+                marker: { color: '#3498db', opacity: 0.7 },
+                name: 'House Prices'
             };
 
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
-            // Animate cards
-            document.querySelectorAll('.concept-card').forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(30px)';
-                card.style.transition = 'all 0.6s ease';
-                observer.observe(card);
+            Plotly.newPlot('histogramPlot', [histogramTrace], {
+                title: 'Distribution of House Prices',
+                xaxis: { title: 'Price ($)' },
+                yaxis: { title: 'Frequency' },
+                bargap: 0.1
             });
 
-            // Animate other elements
-            document.querySelectorAll('.flow-step, .process-box, .toc').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(20px)';
-                el.style.transition = 'all 0.6s ease';
-                observer.observe(el);
+            // Scatter plot (geographic)
+            const scatterTrace = {
+                x: housingData.map(d => d.longitude),
+                y: housingData.map(d => d.latitude),
+                mode: 'markers',
+                marker: {
+                    size: housingData.map(d => Math.sqrt(d.price) / 100),
+                    color: housingData.map(d => d.price),
+                    colorscale: 'Viridis',
+                    showscale: true,
+                    colorbar: { title: 'Price ($)' }
+                },
+                text: housingData.map(d => `Price: ${d.price.toLocaleString()}<br>Income: ${(d.income * 10000).toLocaleString()}`),
+                hovertemplate: '%{text}<extra></extra>',
+                name: 'Housing Districts'
+            };
+
+            Plotly.newPlot('scatterPlot', [scatterTrace], {
+                title: 'Geographic Distribution of Houses (Sample)',
+                xaxis: { title: 'Longitude' },
+                yaxis: { title: 'Latitude' }
+            });
+
+            // Prediction vs Actual plot
+            const actualPrices = [452600, 358500, 352100, 341300, 342200, 67500, 85800, 69400, 344700, 249700];
+            const predictedPrices = [440000, 370000, 340000, 350000, 330000, 75000, 90000, 65000, 360000, 260000];
+
+            const perfectLineTrace = {
+                x: [0, 500000],
+                y: [0, 500000],
+                mode: 'lines',
+                line: { color: 'red', dash: 'dash' },
+                name: 'Perfect Prediction'
+            };
+
+            const predictionTrace = {
+                x: actualPrices,
+                y: predictedPrices,
+                mode: 'markers',
+                marker: { 
+                    size: 10, 
+                    color: '#3498db',
+                    line: { color: 'white', width: 2 }
+                },
+                name: 'Predictions'
+            };
+
+            Plotly.newPlot('predictionPlot', [perfectLineTrace, predictionTrace], {
+                title: 'Model Predictions vs Actual Prices',
+                xaxis: { title: 'Actual Price ($)' },
+                yaxis: { title: 'Predicted Price ($)' }
             });
         }
 
+        // Utility functions
+        function scrollToStep(stepNumber) {
+            document.getElementById(`step${stepNumber}`).scrollIntoView({ behavior: 'smooth' });
+        }
 
-        // Initialize everything when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            // Set initial theme
-            const isDark = localStorage.getItem('theme') === 'dark' || 
-                          (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches);
-            setTheme(isDark);
+        function toggleCollapsible(element) {
+            const content = element.nextElementSibling;
+            const icon = element.querySelector('.toggle-icon');
+            
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
 
-            // Setup event listeners
-            window.addEventListener('scroll', () => {
-                updateProgressBar();
-                updateActiveSection();
-            });
+        function updateProblemType() {
+            const selector = document.getElementById('problemSelector');
+            const result = document.getElementById('problemTypeResult');
+            
+            const scenarios = {
+                'regression': 'Task: Regression | Learning: Supervised | Metric: RMSE',
+                'classification': 'Task: Classification | Learning: Supervised | Metric: Accuracy/F1-Score',
+                'clustering': 'Task: Clustering | Learning: Unsupervised | Metric: Silhouette Score'
+            };
+            
+            result.innerHTML = `<strong>${scenarios[selector.value]}</strong>`;
+        }
 
-            // Initialize components
-            setupCodeCopy();
-            initTooltips();
-            initScrollAnimations();
+        function highlightStep(stepType) {
+            const details = document.getElementById('stepDetails');
+            const stepInfo = {
+                'missing': {
+                    title: 'Handle Missing Values',
+                    content: 'Use median imputation for numerical features. Median is robust to outliers and works well for housing data where missing values might not be random.'
+                },
+                'categorical': {
+                    title: 'Encode Categorical Features',
+                    content: 'Convert text categories (like ocean_proximity) to numbers. Use one-hot encoding for nominal categories or ordinal encoding for ordered categories.'
+                },
+                'scaling': {
+                    title: 'Scale Features',
+                    content: 'Standardize numerical features to have mean=0 and std=1. This ensures all features contribute equally to distance-based algorithms like SVM or KNN.'
+                },
+                'engineering': {
+                    title: 'Feature Engineering',
+                    content: 'Create new features that capture domain knowledge. Room ratios (rooms/household) often predict better than raw room counts.'
+                }
+            };
+            
+            const info = stepInfo[stepType];
+            details.innerHTML = `<strong>${info.title}</strong><br>${info.content}`;
+        }
 
-            // Check for hash in URL and scroll to section
-            if (window.location.hash) {
-                const targetId = window.location.hash.substring(1);
-                setTimeout(() => {
-                    scrollToSection(targetId);
-                }, 100);
-            }
+        function selectModel(modelType) {
+            const details = document.getElementById('modelDetails');
+            const modelInfo = {
+                'linear': 'Linear Regression assumes linear relationships. Good baseline but may be too simple for complex housing patterns.',
+                'tree': 'Decision Tree perfectly fits training data but overfits badly. Single trees are prone to high variance.',
+                'forest': 'Random Forest combines many trees to reduce overfitting while maintaining flexibility. Best balance of bias-variance!'
+            };
+            
+            details.innerHTML = `<strong>Selected:</strong> ${modelInfo[modelType]}`;
+        }
 
-            // Add click handlers for external links
-            document.querySelectorAll('.tool-tag').forEach(tag => {
-                tag.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const toolName = tag.textContent.toLowerCase();
-                    let url = 'https://scikit-learn.org/stable/';
-                    
-                    if (toolName.includes('simpleimputer')) {
-                        url += 'modules/generated/sklearn.impute.SimpleImputer.html';
-                    } else if (toolName.includes('standardscaler')) {
-                        url += 'modules/generated/sklearn.preprocessing.StandardScaler.html';
-                    } else if (toolName.includes('pipeline')) {
-                        url += 'modules/generated/sklearn.pipeline.Pipeline.html';
-                    } else if (toolName.includes('pandas')) {
-                        url = 'https://pandas.pydata.org/docs/';
-                    } else if (toolName.includes('numpy')) {
-                        url = 'https://numpy.org/doc/stable/';
-                    } else if (toolName.includes('matplotlib')) {
-                        url = 'https://matplotlib.org/stable/contents.html';
-                    } else if (toolName.includes('seaborn')) {
-                        url = 'https://seaborn.pydata.org/';
-                    }
-                    
-                    window.open(url, '_blank');
-                });
-            });
+        function updateHyperparameter(param, value) {
+            document.getElementById(param === 'n_estimators' ? 'nEstimatorsValue' : 'maxDepthValue').textContent = value;
+            
+            // Simulate RMSE change based on parameters
+            const baseRMSE = 20000;
+            const nEst = parseInt(document.getElementById('nEstimators').value);
+            const maxDepth = parseInt(document.getElementById('maxDepth').value);
+            
+            // Simple simulation: more trees and deeper trees generally improve performance
+            const estimatedRMSE = baseRMSE - (nEst * 10) - (maxDepth * 200) + Math.random() * 5000;
+            document.getElementById('estimatedRMSE').textContent = Math.max(15000, estimatedRMSE).toFixed(0);
+        }
+
+        function updatePrediction() {
+            const income = parseFloat(document.getElementById('medianIncome').value);
+            const age = parseInt(document.getElementById('houseAge').value);
+            const rooms = parseFloat(document.getElementById('roomsPerHousehold').value);
+            
+            // Update display values
+            document.getElementById('medianIncomeValue').textContent = income.toFixed(1);
+            document.getElementById('houseAgeValue').textContent = age;
+            document.getElementById('roomsPerHouseholdValue').textContent = rooms.toFixed(1);
+            
+            // Simple prediction formula (simplified version of what the model might do)
+            const basePrice = 100000;
+            const incomeEffect = income * 25000; // Higher income areas = higher prices
+            const ageEffect = Math.max(0, (50 - age)) * 1000; // Newer houses worth more
+            const roomEffect = (rooms - 4) * 15000; // More rooms = higher price
+            
+            const predictedPrice = basePrice + incomeEffect + ageEffect + roomEffect;
+            document.getElementById('predictedPrice').textContent = `${predictedPrice.toLocaleString()}`;
+        }
+
+        // Initialize everything when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePlots();
+            updatePrediction();
         });
     </script>
 </body>
