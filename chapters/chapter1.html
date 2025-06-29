@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Machine Learning Models Guide</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: #34495e;
+            overflow-x: auto;
+        }
+
+        .nav-tab {
+            flex: 1;
+            min-width: 200px;
+            padding: 15px 20px;
+            background: #34495e;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .nav-tab:hover {
+            background: #3498db;
+            transform: translateY(-2px);
+        }
+
+        .nav-tab.active {
+            background: #3498db;
+            box-shadow: inset 0 -3px 0 #2980b9;
+        }
+
+        .content {
+            padding: 40px;
+        }
+
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.5s ease-in;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 2em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .section-title::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 80px;
+            height: 3px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            border-radius: 2px;
+        }
+
+        .model-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+
+        .model-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 5px solid #3498db;
+            cursor: pointer;
+        }
+
+        .model-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .model-card h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+
+        .model-card p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .examples {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 15px;
+        }
+
+        .examples h4 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        .examples ul {
+            list-style: none;
+            padding-left: 0;
+        }
+
+        .examples li {
+            padding: 5px 0;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        .examples li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .comparison-table th,
+        .comparison-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
+        }
+
+        .comparison-table th {
+            background: #34495e;
+            color: white;
+            font-weight: 600;
+        }
+
+        .comparison-table tr:hover {
+            background: #f8f9fa;
+        }
+
+        .decision-tree {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .tree-node {
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            margin: 10px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .tree-node:hover {
+            background: #2980b9;
+            transform: scale(1.05);
+        }
+
+        .tree-branch {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin: 20px 0;
+        }
+
+        .interactive-demo {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 20px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .demo-controls {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .demo-control {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .demo-control label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .demo-control select,
+        .demo-control input {
+            width: 100%;
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .demo-control select:focus,
+        .demo-control input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .result-panel {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+            border-left: 5px solid #27ae60;
+        }
+
+        .result-panel h4 {
+            color: #27ae60;
+            margin-bottom: 10px;
+        }
+
+        .highlight {
+            background: linear-gradient(120deg, #a8edea 0%, #fed6e3 100%);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 5px solid #e74c3c;
+        }
+
+        .highlight h4 {
+            color: #c0392b;
+            margin-bottom: 10px;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 10px;
+                border-radius: 10px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 2em;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .nav-tabs {
+                flex-direction: column;
+            }
+
+            .model-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .demo-controls {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🤖 Machine Learning Models Guide</h1>
+            <p>Interactive Summary of Chapter 1 - Hands-On Machine Learning</p>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">Overview</button>
+            <button class="nav-tab" onclick="showTab('supervised')">Supervised Learning</button>
+            <button class="nav-tab" onclick="showTab('unsupervised')">Unsupervised Learning</button>
+            <button class="nav-tab" onclick="showTab('comparison')">Comparison</button>
+            <button class="nav-tab" onclick="showTab('decision')">When to Use</button>
+            <button class="nav-tab" onclick="showTab('demo')">Interactive Demo</button>
+        </div>
+
+        <div class="content">
+            <!-- Overview Tab -->
+            <div id="overview" class="tab-content active">
+                <h2 class="section-title">Machine Learning Fundamentals</h2>
+                
+                <div class="highlight">
+                    <h4>What is Machine Learning?</h4>
+                    <p>Machine Learning is the science of programming computers so they can learn from data without being explicitly programmed for every scenario.</p>
+                </div>
+
+                <div class="model-grid">
+                    <div class="model-card">
+                        <h3>📊 Data-Driven Approach</h3>
+                        <p>Instead of writing rules manually, ML algorithms find patterns in data and make predictions or decisions based on those patterns.</p>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🎯 Performance Improvement</h3>
+                        <p>ML systems improve their performance on a specific task through experience (training data).</p>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🔄 Automation</h3>
+                        <p>Once trained, ML models can make predictions or decisions automatically on new, unseen data.</p>
+                    </div>
+                </div>
+
+                <div class="highlight">
+                    <h4>Main Categories of Machine Learning</h4>
+                    <p><strong>Supervised Learning:</strong> Learning with labeled examples<br>
+                    <strong>Unsupervised Learning:</strong> Finding patterns in data without labels<br>
+                    <strong>Reinforcement Learning:</strong> Learning through trial and error with rewards</p>
+                </div>
+            </div>
+
+            <!-- Supervised Learning Tab -->
+            <div id="supervised" class="tab-content">
+                <h2 class="section-title">Supervised Learning</h2>
+                
+                <div class="highlight">
+                    <h4>Key Characteristic</h4>
+                    <p>The algorithm learns from labeled training data - you provide both input features and the correct answers (labels).</p>
+                </div>
+
+                <div class="model-grid">
+                    <div class="model-card">
+                        <h3>📈 Classification</h3>
+                        <p>Predicts categories or classes. The output is discrete.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>Email spam detection (spam/not spam)</li>
+                                <li>Image recognition (cat/dog/bird)</li>
+                                <li>Medical diagnosis (disease/no disease)</li>
+                                <li>Sentiment analysis (positive/negative/neutral)</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>📊 Regression</h3>
+                        <p>Predicts continuous numerical values. The output is a number.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>House price prediction</li>
+                                <li>Stock price forecasting</li>
+                                <li>Temperature prediction</li>
+                                <li>Sales revenue estimation</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="decision-tree">
+                    <h3 style="text-align: center; margin-bottom: 20px;">Popular Supervised Learning Algorithms</h3>
+                    <div class="tree-branch">
+                        <div class="tree-node">Linear Regression</div>
+                        <div class="tree-node">Logistic Regression</div>
+                        <div class="tree-node">Decision Trees</div>
+                    </div>
+                    <div class="tree-branch">
+                        <div class="tree-node">Random Forest</div>
+                        <div class="tree-node">Support Vector Machines</div>
+                        <div class="tree-node">Neural Networks</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Unsupervised Learning Tab -->
+            <div id="unsupervised" class="tab-content">
+                <h2 class="section-title">Unsupervised Learning</h2>
+                
+                <div class="highlight">
+                    <h4>Key Characteristic</h4>
+                    <p>The algorithm learns from data without labeled examples - it finds hidden patterns or structures in the data.</p>
+                </div>
+
+                <div class="model-grid">
+                    <div class="model-card">
+                        <h3>🎯 Clustering</h3>
+                        <p>Groups similar data points together without knowing the groups beforehand.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>Customer segmentation</li>
+                                <li>Market research</li>
+                                <li>Gene sequencing</li>
+                                <li>Social network analysis</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🔍 Dimensionality Reduction</h3>
+                        <p>Simplifies data while preserving important information.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>Data visualization</li>
+                                <li>Feature selection</li>
+                                <li>Data compression</li>
+                                <li>Noise reduction</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🚨 Anomaly Detection</h3>
+                        <p>Identifies unusual or suspicious data points.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>Fraud detection</li>
+                                <li>Network security</li>
+                                <li>Quality control</li>
+                                <li>Health monitoring</li>
+                            </ul>
+                        </div>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🔗 Association Rules</h3>
+                        <p>Finds relationships between different items or events.</p>
+                        <div class="examples">
+                            <h4>Examples:</h4>
+                            <ul>
+                                <li>Market basket analysis</li>
+                                <li>Recommendation systems</li>
+                                <li>Web usage patterns</li>
+                                <li>Cross-selling strategies</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Comparison Tab -->
+            <div id="comparison" class="tab-content">
+                <h2 class="section-title">Supervised vs Unsupervised Learning</h2>
+                
+                <table class="comparison-table">
+                    <thead>
+                        <tr>
+                            <th>Aspect</th>
+                            <th>Supervised Learning</th>
+                            <th>Unsupervised Learning</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Training Data</strong></td>
+                            <td>Labeled (input + correct output)</td>
+                            <td>Unlabeled (input only)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Goal</strong></td>
+                            <td>Predict outcomes for new data</td>
+                            <td>Discover hidden patterns</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Evaluation</strong></td>
+                            <td>Easy (compare predictions to actual)</td>
+                            <td>Difficult (no ground truth)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Complexity</strong></td>
+                            <td>Generally simpler to implement</td>
+                            <td>More complex interpretation</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Data Requirements</strong></td>
+                            <td>Requires labeled data (expensive)</td>
+                            <td>Works with raw data (cheaper)</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Common Use Cases</strong></td>
+                            <td>Prediction, Classification</td>
+                            <td>Exploration, Pattern Discovery</td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <div class="highlight">
+                    <h4>Semi-Supervised Learning</h4>
+                    <p>A hybrid approach that uses both labeled and unlabeled data. Useful when labeling data is expensive but you have lots of unlabeled data available.</p>
+                </div>
+            </div>
+
+            <!-- Decision Tree Tab -->
+            <div id="decision" class="tab-content">
+                <h2 class="section-title">When to Use Which Model?</h2>
+                
+                <div class="interactive-demo">
+                    <h3>Decision Helper</h3>
+                    <p>Answer these questions to get a recommendation:</p>
+                    
+                    <div class="demo-controls">
+                        <div class="demo-control">
+                            <label for="dataType">Do you have labeled data?</label>
+                            <select id="dataType" onchange="updateRecommendation()">
+                                <option value="">Select...</option>
+                                <option value="labeled">Yes, I have input-output pairs</option>
+                                <option value="unlabeled">No, only input data</option>
+                                <option value="mixed">Some labeled, mostly unlabeled</option>
+                            </select>
+                        </div>
+                        
+                        <div class="demo-control">
+                            <label for="taskType">What's your goal?</label>
+                            <select id="taskType" onchange="updateRecommendation()">
+                                <option value="">Select...</option>
+                                <option value="predict">Predict future outcomes</option>
+                                <option value="classify">Categorize items</option>
+                                <option value="group">Find groups/patterns</option>
+                                <option value="reduce">Simplify data</option>
+                                <option value="anomaly">Detect unusual items</option>
+                            </select>
+                        </div>
+                        
+                        <div class="demo-control">
+                            <label for="outputType">What type of output do you need?</label>
+                            <select id="outputType" onchange="updateRecommendation()">
+                                <option value="">Select...</option>
+                                <option value="number">Numbers (prices, temperatures)</option>
+                                <option value="category">Categories (spam/not spam)</option>
+                                <option value="groups">Groups of similar items</option>
+                                <option value="insights">Hidden patterns/insights</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="recommendation" class="result-panel" style="display: none;">
+                        <h4>Recommendation</h4>
+                        <div id="recommendationText"></div>
+                    </div>
+                </div>
+
+                <div class="model-grid" style="margin-top: 30px;">
+                    <div class="model-card">
+                        <h3>🎯 Use Supervised Learning When:</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li>✅ You have labeled training data</li>
+                            <li>✅ You need to make predictions</li>
+                            <li>✅ You can define the problem clearly</li>
+                            <li>✅ You need measurable performance</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="model-card">
+                        <h3>🔍 Use Unsupervised Learning When:</h3>
+                        <ul style="list-style: none; padding: 0;">
+                            <li>✅ You don't have labeled data</li>
+                            <li>✅ You want to explore data</li>
+                            <li>✅ You need to find hidden patterns</li>
+                            <li>✅ You want to understand data structure</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Demo Tab -->
+            <div id="demo" class="tab-content">
+                <h2 class="section-title">Interactive Examples</h2>
+                
+                <div class="interactive-demo">
+                    <h3>Try Different Scenarios</h3>
+                    
+                    <div class="demo-controls">
+                        <div class="demo-control">
+                            <label for="scenario">Choose a Scenario:</label>
+                            <select id="scenario" onchange="showScenario()">
+                                <option value="">Select a scenario...</option>
+                                <option value="email">Email Spam Detection</option>
+                                <option value="house">House Price Prediction</option>
+                                <option value="customer">Customer Segmentation</option>
+                                <option value="fraud">Fraud Detection</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div id="scenarioDetails" class="result-panel" style="display: none;">
+                        <div id="scenarioContent"></div>
+                    </div>
+                </div>
+
+                <div class="highlight">
+                    <h4>Key Takeaways</h4>
+                    <p><strong>Start Simple:</strong> Begin with simple algorithms before trying complex ones.<br>
+                    <strong>Data Quality:</strong> Clean, relevant data is more important than complex algorithms.<br>
+                    <strong>Problem Definition:</strong> Clearly define your problem before choosing an approach.<br>
+                    <strong>Evaluation:</strong> Always measure performance and validate results.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // Hide all tab contents
+            const contents = document.querySelectorAll('.tab-content');
+            contents.forEach(content => content.classList.remove('active'));
+            
+            // Remove active class from all tabs
+            const tabs = document.querySelectorAll('.nav-tab');
+            tabs.forEach(tab => tab.classList.remove('active'));
+            
+            // Show selected tab content
+            document.getElementById(tabName).classList.add('active');
+            
+            // Add active class to clicked tab
+            event.target.classList.add('active');
+        }
+
+        function updateRecommendation() {
+            const dataType = document.getElementById('dataType').value;
+            const taskType = document.getElementById('taskType').value;
+            const outputType = document.getElementById('outputType').value;
+            
+            if (!dataType || !taskType || !outputType) return;
+            
+            let recommendation = '';
+            
+            if (dataType === 'labeled') {
+                if (outputType === 'number') {
+                    recommendation = '<strong>Regression</strong><br>Use algorithms like Linear Regression, Random Forest Regressor, or Neural Networks to predict continuous values.';
+                } else if (outputType === 'category') {
+                    recommendation = '<strong>Classification</strong><br>Use algorithms like Logistic Regression, Decision Trees, or Support Vector Machines to predict categories.';
+                }
+            } else if (dataType === 'unlabeled') {
+                if (taskType === 'group') {
+                    recommendation = '<strong>Clustering</strong><br>Use algorithms like K-Means, Hierarchical Clustering, or DBSCAN to find natural groups in your data.';
+                } else if (taskType === 'reduce') {
+                    recommendation = '<strong>Dimensionality Reduction</strong><br>Use PCA, t-SNE, or UMAP to reduce complexity while preserving important information.';
+                } else if (taskType === 'anomaly') {
+                    recommendation = '<strong>Anomaly Detection</strong><br>Use Isolation Forest, One-Class SVM, or Local Outlier Factor to identify unusual data points.';
+                }
+            } else if (dataType === 'mixed') {
+                recommendation = '<strong>Semi-Supervised Learning</strong><br>Use techniques that combine labeled and unlabeled data, such as Label Propagation or Self-Training.';
+            }
+            
+            if (recommendation) {
+                document.getElementById('recommendation').style.display = 'block';
+                document.getElementById('recommendationText').innerHTML = recommendation;
+            }
+        }
+
+        function showScenario() {
+            const scenario = document.getElementById('scenario').value;
+            let content = '';
+            
+            switch(scenario) {
+                case 'email':
+                    content = `
+                        <h4>📧 Email Spam Detection</h4>
+                        <p><strong>Type:</strong> Supervised Classification</p>
+                        <p><strong>Input:</strong> Email text, sender, subject line</p>
+                        <p><strong>Output:</strong> Spam or Not Spam</p>
+                        <p><strong>Algorithm:</strong> Naive Bayes, SVM, or Logistic Regression</p>
+                        <p><strong>Why this approach:</strong> We have historical emails labeled as spam/not spam, and we want to classify new emails into discrete categories.</p>
+                    `;
+                    break;
+                case 'house':
+                    content = `
+                        <h4>🏠 House Price Prediction</h4>
+                        <p><strong>Type:</strong> Supervised Regression</p>
+                        <p><strong>Input:</strong> Location, size, rooms, age, amenities</p>
+                        <p><strong>Output:</strong> Price in dollars</p>
+                        <p><strong>Algorithm:</strong> Linear Regression, Random Forest, or Gradient Boosting</p>
+                        <p><strong>Why this approach:</strong> We have historical house sales data with known prices, and we want to predict a continuous numerical value.</p>
+                    `;
+                    break;
+                case 'customer':
+                    content = `
+                        <h4>👥 Customer Segmentation</h4>
+                        <p><strong>Type:</strong> Unsupervised Clustering</p>
+                        <p><strong>Input:</strong> Purchase history, demographics, behavior</p>
+                        <p><strong>Output:</strong> Customer groups/segments</p>
+                        <p><strong>Algorithm:</strong> K-Means, Hierarchical Clustering</p>
+                        <p><strong>Why this approach:</strong> We don't know the customer segments beforehand - we want to discover natural groupings in customer behavior.</p>
+                    `;
+                    break;
+                case 'fraud':
+                    content = `
+                        <h4>🚨 Fraud Detection</h4>
+                        <p><strong>Type:</strong> Supervised Classification or Unsupervised Anomaly Detection</p>
+                        <p><strong>Input:</strong> Transaction amount, time, location, merchant</p>
+                        <p><strong>Output:</strong> Fraudulent or Normal (or anomaly score)</p>
+                        <p><strong>Algorithm:</strong> Random Forest, Isolation Forest, or Neural Networks</p>
+                        <p><strong>Why this approach:</strong> Can use supervised learning if we have labeled fraud cases, or unsupervised if we want to detect unusual patterns.</p>
+                    `;
+                    break;
+            }
+            
+            if (content) {
+                document.getElementById('scenarioDetails').style.display = 'block';
+                document.getElementById('scenarioContent').innerHTML = content;
+            }
+        }
+
+        // Add some interactive effects
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add hover effects to model cards
+            const cards = document.querySelectorAll('.model-card');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', function() {
+                    this.style.borderLeftColor = '#e74c3c';
+                });
+                card.addEventListener('mouseleave', function() {
+                    this.style.borderLeftColor = '#3498db';
+                });
+            });
+        });
+    </script>
+</body>
+</html>
