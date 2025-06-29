@@ -3,51 +3,85 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>End-to-End ML Project: California Housing</title>
+    <title>End-to-End ML Project: California Housing | Hands-On Machine Learning</title>
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="../assets/images/favicon.png">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Plotly -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="../assets/css/chapter-styles.css">
+    
+    <!-- Custom Scripts (will be loaded at the end of the body) -->
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            line-height: 1.6;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: white;
-            min-height: 100vh;
-            box-shadow: 0 0 30px rgba(0,0,0,0.1);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #2c3e50, #3498db);
+        /* Custom styles specific to this chapter */
+        .chapter-header {
+            position: relative;
+            overflow: hidden;
+            padding: 4rem 2rem;
+            margin-bottom: 3rem;
             color: white;
-            padding: 2rem;
             text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #4a6fa5);
+            border-radius: 0 0 30px 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
         }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
+        
+        .chapter-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('../assets/images/pattern.png') repeat;
+            opacity: 0.1;
+            z-index: 0;
         }
-
-        .header p {
-            font-size: 1.2rem;
+        
+        .chapter-header h1 {
+            position: relative;
+            font-size: 2.8rem;
+            margin-bottom: 1rem;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+        
+        .chapter-header p {
+            position: relative;
+            font-size: 1.3rem;
+            max-width: 800px;
+            margin: 0 auto;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        
+        .chapter-meta {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .meta-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.95rem;
             opacity: 0.9;
         }
-
-        .nav-menu {
-            background: #34495e;
-            padding: 1rem;
-            position: sticky;
+        
+        .meta-item i {
+            font-size: 1.1rem;
+        }
             top: 0;
             z-index: 100;
         }
@@ -320,11 +354,21 @@
     </style>
 </head>
 <body>
+    <!-- Skip to main content link for accessibility -->
+    <a href="#main-content" class="skip-link">Skip to main content</a>
+    
     <div class="container">
-        <div class="header">
-            <h1>🏠 End-to-End ML Project</h1>
-            <p>California Housing Price Prediction - Interactive Guide</p>
-        </div>
+        <header class="chapter-header">
+            <div class="container">
+                <h1>🏠 End-to-End Machine Learning Project</h1>
+                <p>A comprehensive, interactive guide to building a complete machine learning pipeline for California Housing Price Prediction</p>
+                <div class="chapter-meta">
+                    <span class="meta-item"><i class="fas fa-clock"></i> 30 min read</span>
+                    <span class="meta-item"><i class="fas fa-tags"></i> Machine Learning, Python, Scikit-Learn</span>
+                    <span class="meta-item"><i class="fas fa-calendar-alt"></i> Last updated: June 2023</span>
+                </div>
+            </div>
+        </header>
 
         <nav class="nav-menu">
             <ul>
@@ -380,11 +424,26 @@
         </div>
 
         <!-- Step 1: Frame the Problem -->
-        <div class="step" id="step1">
-            <div class="step-header">
-                <div class="step-number">1</div>
-                <div class="step-title">Frame the Problem</div>
-            </div>
+        <!-- Table of Contents -->
+        <aside class="toc-container" id="table-of-contents">
+            <!-- Generated by JavaScript -->
+        </aside>
+
+        <!-- Main Content -->
+        <main id="main-content">
+            <div class="content-card" id="step1">
+                <div class="content-card-header">
+                    <div class="step-indicator">Step 1</div>
+                    <h2>Frame the Problem</h2>
+                    <div class="content-actions">
+                        <button class="btn btn-outline btn-sm" onclick="window.print()">
+                            <i class="fas fa-print"></i> Print
+                        </button>
+                        <button class="btn btn-outline btn-sm" onclick="toggleDarkMode()">
+                            <i class="fas fa-moon"></i> Dark Mode
+                        </button>
+                    </div>
+                </div>
 
             <div class="concept-box problem">
                 <div class="concept-title">🎯 Problem Definition</div>
@@ -427,10 +486,17 @@
         </div>
 
         <!-- Step 2: Get the Data -->
-        <div class="step" id="step2">
-            <div class="step-header">
-                <div class="step-number">2</div>
-                <div class="step-title">Get the Data</div>
+        </div>
+
+        <div class="content-card" id="step2">
+            <div class="content-card-header">
+                <div class="step-indicator">Step 2</div>
+                <h2>Get the Data</h2>
+                <div class="content-actions">
+                    <button class="btn btn-sm" onclick="copyCode('code2')">
+                        <i class="fas fa-copy"></i> Copy Code
+                    </button>
+                </div>
             </div>
 
             <div class="concept-box">
@@ -489,10 +555,17 @@ print(f"Target: {housing.target_names}")
         </div>
 
         <!-- Step 3: Explore the Data -->
-        <div class="step" id="step3">
-            <div class="step-header">
-                <div class="step-number">3</div>
-                <div class="step-title">Explore the Data</div>
+        </div>
+
+        <div class="content-card" id="step3">
+            <div class="content-card-header">
+                <div class="step-indicator">Step 3</div>
+                <h2>Explore the Data</h2>
+                <div class="content-actions">
+                    <button class="btn btn-sm" onclick="toggleCode('code3')">
+                        <i class="fas fa-code"></i> Toggle Code
+                    </button>
+                </div>
             </div>
 
             <div class="concept-box">
@@ -545,11 +618,15 @@ plt.show()
         </div>
 
         <!-- Step 4: Prepare the Data -->
-        <div class="step" id="step4">
-            <div class="step-header">
-                <div class="step-number">4</div>
-                <div class="step-title">Prepare the Data</div>
+        </div>
+
+        <div class="content-card collapsible" id="step4">
+            <div class="collapsible-header">
+                <div class="step-indicator">Step 4</div>
+                <h2>Prepare the Data</h2>
+                <span class="collapsible-icon">+</span>
             </div>
+            <div class="collapsible-content">
 
             <div class="concept-box">
                 <div class="concept-title">🛠️ Data Preprocessing Pipeline</div>
@@ -632,10 +709,16 @@ preprocessor = ColumnTransformer([
         </div>
 
         <!-- Step 5: Train Models -->
-        <div class="step" id="step5">
-            <div class="step-header">
-                <div class="step-number">5</div>
-                <div class="step-title">Select and Train Models</div>
+        <div class="content-card" id="step5">
+            <div class="content-card-header">
+                <div class="step-indicator">Step 5</div>
+                <h2>Select and Train a Model</h2>
+                <div class="content-actions">
+                    <div class="btn-group">
+                        <button class="btn btn-sm active" data-tab="code">Code</button>
+                        <button class="btn btn-sm" data-tab="visualization">Visualization</button>
+                    </div>
+                </div>
             </div>
 
             <div class="concept-box">
@@ -699,10 +782,17 @@ for name, model in models.items():
         </div>
 
         <!-- Step 6: Fine-tune the Model -->
-        <div class="step" id="step6">
-            <div class="step-header">
-                <div class="step-number">6</div>
-                <div class="step-title">Fine-tune the Model</div>
+        </div>
+
+        <div class="content-card" id="step6">
+            <div class="content-card-header">
+                <div class="step-indicator">Step 6</div>
+                <h2>Fine-tune the Model</h2>
+                <div class="content-actions">
+                    <button class="btn btn-sm" data-tooltip="Click to see hyperparameter tuning details">
+                        <i class="fas fa-info-circle"></i> Info
+                    </button>
+                </div>
             </div>
 
             <div class="concept-box">
@@ -781,10 +871,22 @@ print("Best RMSE:", np.sqrt(-grid_search.best_score_))
         </div>
 
         <!-- Step 7: Evaluate and Launch -->
-        <div class="step" id="step7">
-            <div class="step-header">
-                <div class="step-number">7</div>
-                <div class="step-title">Evaluate and Launch</div>
+        <div class="content-card" id="step7">
+            <div class="content-card-header">
+                <div class="step-indicator">Step 7</div>
+                <h2>Present Your Solution</h2>
+                <div class="content-actions">
+                    <div class="dropdown">
+                        <button class="btn btn-sm dropdown-toggle" data-toggle="dropdown">
+                            <i class="fas fa-download"></i> Export
+                        </button>
+                        <div class="dropdown-menu">
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-pdf"></i> PDF</a>
+                            <a class="dropdown-item" href="#"><i class="fas fa-file-code"></i> Jupyter Notebook</a>
+                            <a class="dropdown-item" href="#"><i class="fab fa-github"></i> GitHub</a>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <div class="concept-box">
@@ -923,9 +1025,89 @@ print(f"Predicted price: ${sample_price:,.2f}")
                 <p>This project demonstrates the complete ML workflow: from business problem to deployed model. Each step builds on the previous, and iteration is key to success.</p>
             </div>
         </div>
-    </div>
-
+        </div>
+        
+        <!-- Feedback Section -->
+        <div class="feedback-section">
+            <h3>Was this chapter helpful?</h3>
+            <div class="feedback-buttons">
+                <button class="btn btn-outline" onclick="submitFeedback('helpful')">
+                    <i class="fas fa-thumbs-up"></i> Helpful
+                </button>
+                <button class="btn btn-outline" onclick="submitFeedback('not-helpful')">
+                    <i class="fas fa-thumbs-down"></i> Needs Improvement
+                </button>
+            </div>
+        </div>
+        
+        <!-- Navigation -->
+        <div class="chapter-navigation">
+            <a href="chapter1.html" class="btn btn-outline">
+                <i class="fas fa-arrow-left"></i> Previous Chapter
+            </a>
+            <a href="chapter3.html" class="btn btn-primary">
+                Next Chapter <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+        
+    </main>
+    
+    <!-- Footer -->
+    <footer class="chapter-footer">
+        <div class="container">
+            <p>© 2023 Hands-On Machine Learning. All rights reserved.</p>
+            <div class="footer-links">
+                <a href="#">About</a>
+                <a href="#">GitHub</a>
+                <a href="#">License</a>
+                <a href="#">Contact</a>
+            </div>
+        </div>
+    </footer>
+    
+    <!-- Back to top button -->
+    <button id="back-to-top" class="back-to-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+    
+    <!-- Custom Scripts -->
+    <script src="../assets/js/chapter-scripts.js"></script>
+    
     <script>
+        // Chapter-specific scripts
+        function toggleDarkMode() {
+            document.body.classList.toggle('dark-mode');
+            localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+        }
+        
+        // Check for saved theme preference
+        if (localStorage.getItem('darkMode') === 'true') {
+            document.body.classList.add('dark-mode');
+        }
+        
+        // Back to top button
+        const backToTopButton = document.getElementById('back-to-top');
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                backToTopButton.classList.add('show');
+            } else {
+                backToTopButton.classList.remove('show');
+            }
+        });
+        
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+        
+        // Feedback submission
+        function submitFeedback(type) {
+            // In a real app, you would send this to your backend
+            console.log(`Feedback submitted: ${type}`);
+            alert('Thank you for your feedback!');
+        }
         // Sample California housing data for visualizations
         const housingData = [
             { longitude: -122.23, latitude: 37.88, price: 452600, income: 8.3252, age: 41 },
@@ -1112,6 +1294,22 @@ print(f"Predicted price: ${sample_price:,.2f}")
         document.addEventListener('DOMContentLoaded', function() {
             initializePlots();
             updatePrediction();
+            
+            // Add animation to elements as they come into view
+            const animateOnScroll = function() {
+                const elements = document.querySelectorAll('.content-card, .section');
+                elements.forEach(element => {
+                    const elementPosition = element.getBoundingClientRect().top;
+                    const screenPosition = window.innerHeight / 1.3;
+                    
+                    if (elementPosition < screenPosition) {
+                        element.classList.add('animate');
+                    }
+                });
+            };
+            
+            window.addEventListener('scroll', animateOnScroll);
+            animateOnScroll(); // Run once on load
         });
     </script>
 </body>
